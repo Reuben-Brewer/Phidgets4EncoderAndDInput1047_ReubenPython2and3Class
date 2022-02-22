@@ -415,7 +415,7 @@ if __name__ == '__main__':
 
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict
     Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                                ("DesiredSerialNumber", 641383),
+                                                                                ("DesiredSerialNumber", 641383), #CHANGE THIS TO MATCH YOUR UNIQUE SERIAL NUMBER
                                                                                 ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
                                                                                 ("NameToDisplay_UserSet", "Reuben's Test Encoders Board"),
                                                                                 ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
