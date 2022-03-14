@@ -1,4 +1,5 @@
-########################  
+########################
+
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class
 
 Wrapper (including ability to hook to Tkinter GUI) to control Phidget Encoder HighSpeed 4-Input (4 quadrature encoders and 4 digital inputs) 1047_2B (non VINT).
@@ -29,7 +30,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision D, 02/21/2022
+Software Revision E, 03/13/2022
 
 Verified working on: 
 Python 2.7, 3.8.
