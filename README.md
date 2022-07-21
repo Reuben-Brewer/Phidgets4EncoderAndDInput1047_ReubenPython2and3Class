@@ -1,4 +1,4 @@
-########################  
+########################
 
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class
 
@@ -19,9 +19,10 @@ While disabled, this board draws 30mA of current.
 Reports a timestamp in milliseconds for each position change event, for easy velocity calculation."
 
 Phidget Encoder HighSpeed 4-Input
-ID: 1047_2B
-https://phidgets.com/?tier=3&catid=4&pcid=2&prodid=1199
 
+ID: 1047_2B
+
+https://phidgets.com/?tier=3&catid=4&pcid=2&prodid=1199
 
 Reuben Brewer, Ph.D.
 
@@ -29,15 +30,18 @@ reuben.brewer@gmail.com
 
 www.reubotics.com
 
-
 Apache 2 License
 
-Software Revision E, 03/13/2022
+Software Revision F, 07/20/2022
 
 Verified working on: 
+
 Python 2.7, 3.8.
+
 Windows 8.1, 10 64-bit
+
 Raspberry Pi Buster 
+
 (no Mac testing yet)
 
 *NOTE THAT YOU MUST INSTALL BOTH THE Phidget22 LIBRARY AS WELL AS THE PYTHON MODULE.*
@@ -46,11 +50,19 @@ Raspberry Pi Buster
 
 ########################### Python module installation instructions, all OS's
 
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
+
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['future.builtins', 'MyPrint_ReubenPython2and3Class']
+
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
+
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
+
 https://pypi.org/project/Phidget22/#files
 
 To install the Python module using pip:
 
-pip install Phidget22 (with "sudo" if on Linux/Raspberry Pi)
+pip install Phidget22       (with "sudo" if on Linux/Raspberry Pi)
 
 To install the Python module from the downloaded .tar.gz file, enter downloaded folder and type "python setup.py install"
 
