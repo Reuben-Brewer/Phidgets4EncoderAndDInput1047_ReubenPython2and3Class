@@ -6,24 +6,31 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision E, 03/13/2022
+Software Revision F, 07/20/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
+###########################################################
 from LowPassFilter_ReubenPython2and3Class import *
+###########################################################
 
-import os, sys, platform
-import time, datetime
+###########################################################
+import os
+import sys
+import platform
+import time
+import datetime
 import math
 import collections
 import inspect #To enable 'TellWhichFileWereIn'
 import threading
 import traceback
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -32,40 +39,37 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     import Queue  # Python 2
 else:
     import queue as Queue  # Python 3
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from builtins import raw_input as input
 else:
     from future.builtins import input as input
-############### #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
+########################################################### "sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
 
-###############
+###########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+###########################################################
 
 ###########################################################
-###########################################################
-#To install Phidget22, enter folder "Phidget22Python_1.0.0.20190107\Phidget22Python" and type "python setup.py install"
 from Phidget22.PhidgetException import *
 from Phidget22.Phidget import *
 from Phidget22.Devices.Log import *
 from Phidget22.LogLevel import *
 from Phidget22.Devices.Encoder import *
 from Phidget22.Devices.DigitalInput import *
-###########################################################
 ###########################################################
 
 class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
@@ -77,7 +81,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         print("#################### Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__ starting. ####################")
 
         self.EXIT_PROGRAM_FLAG = 0
-        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = -1
+        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
         self.EnableInternal_MyPrint_Flag = 0
         self.MainThread_still_running_flag = 0
 
@@ -96,54 +100,42 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         self.DetectedDeviceSerialNumber = "default"
         #########################################################
 
+        self.NumberOfEncoders = 4
+        self.NumberOfDigitalInputs = 4
+
         self.EncodersList_PhidgetsEncoderObjects = list()
 
-        self.EncodersList_AttachedAndOpenFlag = [0.0] * 4
-        self.EncodersList_NeedsToBeHomedFlag = [0] * 4
-        self.EncodersList_UpdateDeltaTseconds = [0.0] * 4
-        self.EncodersList_UpdateFrequencyHz = [0.0] * 4
-        self.EncodersList_ErrorCallbackFiredFlag = [0.0] * 4
+        self.EncodersList_AttachedAndOpenFlag = [0.0] * self.NumberOfEncoders
+        self.EncodersList_NeedsToBeHomedFlag = [0] * self.NumberOfEncoders
+        self.EncodersList_UpdateDeltaTseconds = [0.0] * self.NumberOfEncoders
+        self.EncodersList_UpdateFrequencyHz = [0.0] * self.NumberOfEncoders
+        self.EncodersList_ErrorCallbackFiredFlag = [0.0] * self.NumberOfEncoders
 
-        self.EncodersList_Position_EncoderTicks = [0.0] * 4
-        self.EncodersList_Position_Rev = [0.0] * 4
-        self.EncodersList_Position_Degrees = [0.0] * 4
+        self.EncodersList_Position_EncoderTicks = [0.0] * self.NumberOfEncoders
+        self.EncodersList_Position_Rev = [0.0] * self.NumberOfEncoders
+        self.EncodersList_Position_Degrees = [0.0] * self.NumberOfEncoders
 
-        self.EncodersList_IndexPosition_EncoderTicks = [-11111.0] * 4
-        self.EncodersList_IndexPosition_Rev = [-11111.0] * 4
-        self.EncodersList_IndexPosition_Degrees = [-11111.0] * 4
+        self.EncodersList_IndexPosition_EncoderTicks = [-11111.0] * self.NumberOfEncoders
+        self.EncodersList_IndexPosition_Rev = [-11111.0] * self.NumberOfEncoders
+        self.EncodersList_IndexPosition_Degrees = [-11111.0] * self.NumberOfEncoders
 
-        self.EncodersList_HomingOffsetPosition_EncoderTicks = [0.0] * 4
+        self.EncodersList_HomingOffsetPosition_EncoderTicks = [0.0] * self.NumberOfEncoders
 
-        self.EncodersList_Speed_EncoderTicksPerSecond_Raw = [-11111.0] * 4
-        self.EncodersList_Speed_RPM_Raw = [-11111.0] * 4
-        self.EncodersList_Speed_RPS_Raw = [-11111.0] * 4
+        self.EncodersList_Speed_EncoderTicksPerSecond_Raw = [-11111.0] * self.NumberOfEncoders
+        self.EncodersList_Speed_RPM_Raw = [-11111.0] * self.NumberOfEncoders
+        self.EncodersList_Speed_RPS_Raw = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject = list()
-        self.EncodersList_Speed_EncoderTicksPerSecond_Filtered = [-11111.0] * 4
-        self.EncodersList_Speed_RPM_Filtered = [-11111.0] * 4
-        self.EncodersList_Speed_RPS_Filtered = [-11111.0] * 4
+        self.EncodersList_Speed_EncoderTicksPerSecond_Filtered = [-11111.0] * self.NumberOfEncoders
+        self.EncodersList_Speed_RPM_Filtered = [-11111.0] * self.NumberOfEncoders
+        self.EncodersList_Speed_RPS_Filtered = [-11111.0] * self.NumberOfEncoders
 
         self.DigitalInputsList_PhidgetsDIobjects = list()
 
-        self.DigitalInputsList_AttachedAndOpenFlag = [0.0] * 4
-        self.DigitalInputsList_ErrorCallbackFiredFlag = [0.0] * 4
-        self.DigitalInputsList_State = [-1] * 4
+        self.DigitalInputsList_AttachedAndOpenFlag = [0.0] * self.NumberOfDigitalInputs
+        self.DigitalInputsList_ErrorCallbackFiredFlag = [0.0] * self.NumberOfDigitalInputs
+        self.DigitalInputsList_State = [-1] * self.NumberOfDigitalInputs
 
-        self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
-                                             ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
-                                             ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
-                                             ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
-                                             ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
-                                             ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
-                                             ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
-                                             ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
-                                             ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
-                                             ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
-                                             ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
-                                             ("DigitalInputsList_State", self.DigitalInputsList_State),
-                                             ("DigitalInputsList_ErrorCallbackFiredFlag", self.DigitalInputsList_ErrorCallbackFiredFlag),
-                                             ("Time", self.CurrentTime_CalculatedFromMainThread)])
+        self.MostRecentDataDict = dict()
 
         ##########################################
         ##########################################
@@ -167,283 +159,319 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         ##########################################
         ##########################################
 
-        ##########################################
-        ##########################################
+        #########################################################
+        #########################################################
         if "GUIparametersDict" in setup_dict:
             self.GUIparametersDict = setup_dict["GUIparametersDict"]
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "USE_GUI_FLAG" in self.GUIparametersDict:
                 self.USE_GUI_FLAG = self.PassThrough0and1values_ExitProgramOtherwise("USE_GUI_FLAG", self.GUIparametersDict["USE_GUI_FLAG"])
             else:
                 self.USE_GUI_FLAG = 0
 
-            print("USE_GUI_FLAG = " + str(self.USE_GUI_FLAG))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "root" in self.GUIparametersDict:
                 self.root = self.GUIparametersDict["root"]
-                self.RootIsOwnedExternallyFlag = 1
             else:
-                self.root = None
-                self.RootIsOwnedExternallyFlag = 0
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, must pass in 'root'")
+                return
+            #########################################################
+            #########################################################
 
-            print("RootIsOwnedExternallyFlag = " + str(self.RootIsOwnedExternallyFlag))
-            ##########################################
-
-            ##########################################
-            if "GUI_RootAfterCallbackInterval_Milliseconds" in self.GUIparametersDict:
-                self.GUI_RootAfterCallbackInterval_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_RootAfterCallbackInterval_Milliseconds", self.GUIparametersDict["GUI_RootAfterCallbackInterval_Milliseconds"], 0.0, 1000.0))
-            else:
-                self.GUI_RootAfterCallbackInterval_Milliseconds = 30
-
-            print("GUI_RootAfterCallbackInterval_Milliseconds = " + str(self.GUI_RootAfterCallbackInterval_Milliseconds))
-            ##########################################
-
-            ##########################################
+            #########################################################
+            #########################################################
             if "EnableInternal_MyPrint_Flag" in self.GUIparametersDict:
                 self.EnableInternal_MyPrint_Flag = self.PassThrough0and1values_ExitProgramOtherwise("EnableInternal_MyPrint_Flag", self.GUIparametersDict["EnableInternal_MyPrint_Flag"])
             else:
                 self.EnableInternal_MyPrint_Flag = 0
 
-            print("EnableInternal_MyPrint_Flag: " + str(self.EnableInternal_MyPrint_Flag))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EnableInternal_MyPrint_Flag: " + str(self.EnableInternal_MyPrint_Flag))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "PrintToConsoleFlag" in self.GUIparametersDict:
                 self.PrintToConsoleFlag = self.PassThrough0and1values_ExitProgramOtherwise("PrintToConsoleFlag", self.GUIparametersDict["PrintToConsoleFlag"])
             else:
                 self.PrintToConsoleFlag = 1
 
-            print("PrintToConsoleFlag: " + str(self.PrintToConsoleFlag))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: PrintToConsoleFlag: " + str(self.PrintToConsoleFlag))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "NumberOfPrintLines" in self.GUIparametersDict:
                 self.NumberOfPrintLines = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("NumberOfPrintLines", self.GUIparametersDict["NumberOfPrintLines"], 0.0, 50.0))
             else:
                 self.NumberOfPrintLines = 10
 
-            print("NumberOfPrintLines = " + str(self.NumberOfPrintLines))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: NumberOfPrintLines: " + str(self.NumberOfPrintLines))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "UseBorderAroundThisGuiObjectFlag" in self.GUIparametersDict:
                 self.UseBorderAroundThisGuiObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UseBorderAroundThisGuiObjectFlag", self.GUIparametersDict["UseBorderAroundThisGuiObjectFlag"])
             else:
                 self.UseBorderAroundThisGuiObjectFlag = 0
 
-            print("UseBorderAroundThisGuiObjectFlag: " + str(self.UseBorderAroundThisGuiObjectFlag))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: UseBorderAroundThisGuiObjectFlag: " + str(self.UseBorderAroundThisGuiObjectFlag))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_ROW" in self.GUIparametersDict:
                 self.GUI_ROW = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROW", self.GUIparametersDict["GUI_ROW"], 0.0, 1000.0))
             else:
                 self.GUI_ROW = 0
 
-            print("GUI_ROW = " + str(self.GUI_ROW))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_ROW: " + str(self.GUI_ROW))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_COLUMN" in self.GUIparametersDict:
                 self.GUI_COLUMN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMN", self.GUIparametersDict["GUI_COLUMN"], 0.0, 1000.0))
             else:
                 self.GUI_COLUMN = 0
 
-            print("GUI_COLUMN = " + str(self.GUI_COLUMN))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_COLUMN: " + str(self.GUI_COLUMN))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_PADX" in self.GUIparametersDict:
                 self.GUI_PADX = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_PADX", self.GUIparametersDict["GUI_PADX"], 0.0, 1000.0))
             else:
                 self.GUI_PADX = 0
 
-            print("GUI_PADX = " + str(self.GUI_PADX))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_PADX: " + str(self.GUI_PADX))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_PADY" in self.GUIparametersDict:
                 self.GUI_PADY = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_PADY", self.GUIparametersDict["GUI_PADY"], 0.0, 1000.0))
             else:
                 self.GUI_PADY = 0
 
-            print("GUI_PADY = " + str(self.GUI_PADY))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_PADY: " + str(self.GUI_PADY))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_ROWSPAN" in self.GUIparametersDict:
-                self.GUI_ROWSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROWSPAN", self.GUIparametersDict["GUI_ROWSPAN"], 0.0, 1000.0))
+                self.GUI_ROWSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROWSPAN", self.GUIparametersDict["GUI_ROWSPAN"], 1.0, 1000.0))
             else:
-                self.GUI_ROWSPAN = 0
+                self.GUI_ROWSPAN = 1
 
-            print("GUI_ROWSPAN = " + str(self.GUI_ROWSPAN))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_ROWSPAN: " + str(self.GUI_ROWSPAN))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_COLUMNSPAN" in self.GUIparametersDict:
-                self.GUI_COLUMNSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMNSPAN", self.GUIparametersDict["GUI_COLUMNSPAN"], 0.0, 1000.0))
+                self.GUI_COLUMNSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMNSPAN", self.GUIparametersDict["GUI_COLUMNSPAN"], 1.0, 1000.0))
             else:
-                self.GUI_COLUMNSPAN = 0
+                self.GUI_COLUMNSPAN = 1
 
-            print("GUI_COLUMNSPAN = " + str(self.GUI_COLUMNSPAN))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_COLUMNSPAN: " + str(self.GUI_COLUMNSPAN))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_STICKY" in self.GUIparametersDict:
                 self.GUI_STICKY = str(self.GUIparametersDict["GUI_STICKY"])
             else:
                 self.GUI_STICKY = "w"
 
-            print("GUI_STICKY = " + str(self.GUI_STICKY))
-            ##########################################
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUI_STICKY: " + str(self.GUI_STICKY))
+            #########################################################
+            #########################################################
 
         else:
             self.GUIparametersDict = dict()
             self.USE_GUI_FLAG = 0
             print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: No GUIparametersDict present, setting USE_GUI_FLAG = " + str(self.USE_GUI_FLAG))
 
-        print("GUIparametersDict = " + str(self.GUIparametersDict))
-        ##########################################
-        ##########################################
+        #print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: GUIparametersDict: " + str(self.GUIparametersDict))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "DesiredSerialNumber" in setup_dict:
             try:
                 self.DesiredSerialNumber = int(setup_dict["DesiredSerialNumber"])
             except:
-                print("ERROR: DesiredSerialNumber invalid.")
+                print("Error: DesiredSerialNumber invalid.")
         else:
-            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__ ERROR: Must initialize object with 'DesiredSerialNumber' argument.")
-            self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
-            return
+            self.DesiredSerialNumber = -1
         
-        print("DesiredSerialNumber: " + str(self.DesiredSerialNumber))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DesiredSerialNumber: " + str(self.DesiredSerialNumber))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "NameToDisplay_UserSet" in setup_dict:
             self.NameToDisplay_UserSet = str(setup_dict["NameToDisplay_UserSet"])
         else:
             self.NameToDisplay_UserSet = ""
-        ##########################################
 
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: NameToDisplay_UserSet: " + str(self.NameToDisplay_UserSet))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
         if "WaitForAttached_TimeoutDuration_Milliseconds" in setup_dict:
             self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", setup_dict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
 
         else:
             self.WaitForAttached_TimeoutDuration_Milliseconds = 5000
 
-        print("WaitForAttached_TimeoutDuration_Milliseconds: " + str(self.WaitForAttached_TimeoutDuration_Milliseconds))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: WaitForAttached_TimeoutDuration_Milliseconds: " + str(self.WaitForAttached_TimeoutDuration_Milliseconds))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in setup_dict:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", setup_dict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
         else:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = 1
 
-        print("UsePhidgetsLoggingInternalToThisClassObjectFlag: " + str(self.UsePhidgetsLoggingInternalToThisClassObjectFlag))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: UsePhidgetsLoggingInternalToThisClassObjectFlag: " + str(self.UsePhidgetsLoggingInternalToThisClassObjectFlag))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "EncoderUpdateDeltaT_ms" in setup_dict:
             self.EncoderUpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncoderUpdateDeltaT_ms", setup_dict["EncoderUpdateDeltaT_ms"], 8.0, 60000.0))
         else:
             self.EncoderUpdateDeltaT_ms = 8
 
-        print("EncoderUpdateDeltaT_ms: " + str(self.EncoderUpdateDeltaT_ms))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncoderUpdateDeltaT_ms: " + str(self.EncoderUpdateDeltaT_ms))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "EncodersList_ChannelsBeingWatchedList" in setup_dict:
             EncodersList_ChannelsBeingWatchedList_TEMP = setup_dict["EncodersList_ChannelsBeingWatchedList"]
-            if self.IsInputList(EncodersList_ChannelsBeingWatchedList_TEMP) == 1 and len(EncodersList_ChannelsBeingWatchedList_TEMP) == 4:
+            if self.IsInputList(EncodersList_ChannelsBeingWatchedList_TEMP) == 1 and len(EncodersList_ChannelsBeingWatchedList_TEMP)== self.NumberOfEncoders:
                 self.EncodersList_ChannelsBeingWatchedList = list()
                 for EncoderChannel, EnabledState_TEMP in enumerate(EncodersList_ChannelsBeingWatchedList_TEMP):
                     EnabledState = self.PassThrough0and1values_ExitProgramOtherwise("EncodersList_ChannelsBeingWatchedList, EncoderChannel " + str(EncoderChannel), EnabledState_TEMP)
                     self.EncodersList_ChannelsBeingWatchedList.append(EnabledState)
             else:
-                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: ERROR, 'EncodersList_ChannelsBeingWatchedList' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'EncodersList_ChannelsBeingWatchedList' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
-            self.EncodersList_ChannelsBeingWatchedList = [1, 1, 1, 1]
+            self.EncodersList_ChannelsBeingWatchedList = [1]*self.NumberOfEncoders
 
-        print("EncodersList_ChannelsBeingWatchedList: " + str(self.EncodersList_ChannelsBeingWatchedList))
-        ##########################################
+        ######## We examine self.EncodersList_ChannelsBeingWatchedList[0] to obtain device information for the boardm so this channel must be watched.
+        if self.EncodersList_ChannelsBeingWatchedList[0] != 1:
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Caution! 0th index of EncodersList_ChannelsBeingWatchedList must be 1!")
+            self.EncodersList_ChannelsBeingWatchedList[0] = 1
+        ########
 
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncodersList_ChannelsBeingWatchedList: " + str(self.EncodersList_ChannelsBeingWatchedList))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
         if "EncodersList_CPR" in setup_dict:
             EncodersList_CPR_TEMP = setup_dict["EncodersList_CPR"]
-            if self.IsInputList(EncodersList_CPR_TEMP) == 1 and len(EncodersList_CPR_TEMP) == 4:
+            if self.IsInputList(EncodersList_CPR_TEMP) == 1 and len(EncodersList_CPR_TEMP)== self.NumberOfEncoders:
                 self.EncodersList_CPR = list()
                 for EncoderChannel, CPR_TEMP in enumerate(EncodersList_CPR_TEMP):
                     CPR = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_CPR, EncoderChannel " + str(EncoderChannel), CPR_TEMP, 0, 250000)
                     self.EncodersList_CPR.append(CPR)
             else:
-                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: ERROR, 'EncodersList_CPR' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'EncodersList_CPR' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
-            self.EncodersList_CPR = [1, 1, 1, 1]
+            self.EncodersList_CPR = [1]*self.NumberOfEncoders
 
-        print("EncodersList_CPR: " + str(self.EncodersList_CPR))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncodersList_CPR: " + str(self.EncodersList_CPR))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "EncodersList_SpeedExponentialFilterLambda" in setup_dict:
             EncodersList_SpeedExponentialFilterLambda_TEMP = setup_dict["EncodersList_SpeedExponentialFilterLambda"]
-            if self.IsInputList(EncodersList_SpeedExponentialFilterLambda_TEMP) == 1 and len(EncodersList_SpeedExponentialFilterLambda_TEMP) == 4:
+            if self.IsInputList(EncodersList_SpeedExponentialFilterLambda_TEMP) == 1 and len(EncodersList_SpeedExponentialFilterLambda_TEMP)== self.NumberOfEncoders:
                 self.EncodersList_SpeedExponentialFilterLambda = list()
                 for EncoderChannel, SpeedExponentialFilterLambda_TEMP in enumerate(EncodersList_SpeedExponentialFilterLambda_TEMP):
                     SpeedExponentialFilterLambda = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_SpeedExponentialFilterLambda, EncoderChannel " + str(EncoderChannel), SpeedExponentialFilterLambda_TEMP, 0.0, 1.0)
                     self.EncodersList_SpeedExponentialFilterLambda.append(SpeedExponentialFilterLambda)
             else:
-                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: ERROR, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
-            self.EncodersList_SpeedExponentialFilterLambda = [1.0, 1.0, 1.0, 1.0]
+            self.EncodersList_SpeedExponentialFilterLambda = [1.0]*self.NumberOfEncoders #Default to no filtering, new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
 
-        print("EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "DigitalInputsList_ChannelsBeingWatchedList" in setup_dict:
             DigitalInputsList_ChannelsBeingWatchedList_TEMP = setup_dict["DigitalInputsList_ChannelsBeingWatchedList"]
-            if self.IsInputList(DigitalInputsList_ChannelsBeingWatchedList_TEMP) == 1 and len(DigitalInputsList_ChannelsBeingWatchedList_TEMP) == 4:
+            if self.IsInputList(DigitalInputsList_ChannelsBeingWatchedList_TEMP) == 1 and len(DigitalInputsList_ChannelsBeingWatchedList_TEMP)== self.NumberOfDigitalInputs:
                 self.DigitalInputsList_ChannelsBeingWatchedList = list()
                 for DigitalInputChannel, EnabledState_TEMP in enumerate(DigitalInputsList_ChannelsBeingWatchedList_TEMP):
                     EnabledState = self.PassThrough0and1values_ExitProgramOtherwise("DigitalInputsList_ChannelsBeingWatchedList, DigitalInputChannel " + str(DigitalInputChannel), EnabledState_TEMP)
                     self.DigitalInputsList_ChannelsBeingWatchedList.append(EnabledState)
             else:
-                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: ERROR, 'DigitalInputsList_ChannelsBeingWatchedList' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'DigitalInputsList_ChannelsBeingWatchedList' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
-            self.DigitalInputsList_ChannelsBeingWatchedList = [1, 1, 1, 1]
+            self.DigitalInputsList_ChannelsBeingWatchedList = [1]*self.NumberOfDigitalInputs
 
-        print("DigitalInputsList_ChannelsBeingWatchedList: " + str(self.DigitalInputsList_ChannelsBeingWatchedList))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DigitalInputsList_ChannelsBeingWatchedList: " + str(self.DigitalInputsList_ChannelsBeingWatchedList))
+        #########################################################
+        #########################################################
 
-       ##########################################
+        #########################################################
+        #########################################################
         if "MainThread_TimeToSleepEachLoop" in setup_dict:
             self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", setup_dict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.MainThread_TimeToSleepEachLoop = 0.005
 
-        print("MainThread_TimeToSleepEachLoop: " + str(self.MainThread_TimeToSleepEachLoop))
-        ##########################################
+        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: MainThread_TimeToSleepEachLoop: " + str(self.MainThread_TimeToSleepEachLoop))
+        #########################################################
+        #########################################################
 
         #########################################################
+        #########################################################
         try:
-            
-            for EncoderChannel in range(0, 4):
+            for EncoderChannel in range(0, self.NumberOfEncoders):
                 self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject.append(LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
                                                                                                                 ("UseExponentialSmoothingFilterFlag", 1),
                                                                                                                 ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])])))
@@ -452,20 +480,33 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     
                 if LOWPASSFILTER_OPEN_FLAG != 1:
                     print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to open LowPassFilter_ReubenPython2and3ClassObject.")
-                    self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                     return
 
         except:
             exceptions = sys.exc_info()[0]
             print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Exceptions: %s" % exceptions)
         #########################################################
+        #########################################################
 
+        #########################################################
         #########################################################
         self.PrintToGui_Label_TextInputHistory_List = [" "]*self.NumberOfPrintLines
         self.PrintToGui_Label_TextInput_Str = ""
         self.GUI_ready_to_be_updated_flag = 0
         #########################################################
+        #########################################################
 
+        #########################################################
+        #########################################################
+        self.EncoderInputsList_ListOfOnAttachCallbackFunctionNames = [self.Encoder0onAttachCallback, self.Encoder1onAttachCallback, self.Encoder2onAttachCallback, self.Encoder3onAttachCallback]
+        self.EncoderInputsList_ListOfOnDetachCallbackFunctionNames = [self.Encoder0onDetachCallback, self.Encoder1onDetachCallback, self.Encoder2onDetachCallback, self.Encoder3onDetachCallback]
+        self.EncoderInputsList_ListOfOnErrorCallbackFunctionNames = [self.Encoder0onErrorCallback, self.Encoder1onErrorCallback, self.Encoder2onErrorCallback, self.Encoder3onErrorCallback]
+        self.EncoderInputsList_ListOfOnEncoderOnPositionChangeCallbackFunctionNames = [self.Encoder0onPositionChangeCallback, self.Encoder1onPositionChangeCallback, self.Encoder2onPositionChangeCallback, self.Encoder3onPositionChangeCallback]
+
+        self.DigitalInputsList_ListOfOnAttachCallbackFunctionNames = [self.DigitalInput0onAttachCallback, self.DigitalInput1onAttachCallback, self.DigitalInput2onAttachCallback, self.DigitalInput3onAttachCallback]
+        self.DigitalInputsList_ListOfOnDetachCallbackFunctionNames = [self.DigitalInput0onDetachCallback, self.DigitalInput1onDetachCallback, self.DigitalInput2onDetachCallback, self.DigitalInput3onDetachCallback]
+        self.DigitalInputsList_ListOfOnErrorCallbackFunctionNames = [self.DigitalInput0onErrorCallback, self.DigitalInput1onErrorCallback, self.DigitalInput2onErrorCallback, self.DigitalInput3onErrorCallback]
+        self.DigitalInputsList_ListOfonStateChangeCallbackFunctionNames = [self.DigitalInput0onStateChangeCallback, self.DigitalInput1onStateChangeCallback, self.DigitalInput2onStateChangeCallback, self.DigitalInput3onStateChangeCallback]
         #########################################################
         #########################################################
 
@@ -474,127 +515,40 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         try:
 
             #########################################################
-            if self.EncodersList_ChannelsBeingWatchedList[0] == 1:
-                self.Encoder0object = Encoder()
-                self.EncodersList_PhidgetsEncoderObjects.append(self.Encoder0object)
-                self.Encoder0object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.Encoder0object.setChannel(0)
-                self.Encoder0object.setOnPositionChangeHandler(self.Encoder0onPositionChangeCallback)
-                self.Encoder0object.setOnAttachHandler(self.Encoder0onAttachCallback)
-                self.Encoder0object.setOnDetachHandler(self.Encoder0onDetachCallback)
-                self.Encoder0object.setOnErrorHandler(self.Encoder0onErrorCallback)
-                self.Encoder0object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
+            for EncoderChannel in range(0, self.NumberOfEncoders):
+                if self.EncodersList_ChannelsBeingWatchedList[EncoderChannel] == 1:
+                    self.EncodersList_PhidgetsEncoderObjects.append(Encoder())
 
-            else:
-                self.EncodersList_PhidgetsEncoderObjects.append("NULL")
-            #########################################################
+                    if self.DesiredSerialNumber != -1:
+                        self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setDeviceSerialNumber(self.DesiredSerialNumber)
 
-            #########################################################
-            if self.EncodersList_ChannelsBeingWatchedList[1] == 1:
-                self.Encoder1object = Encoder()
-                self.EncodersList_PhidgetsEncoderObjects.append(self.Encoder1object)
-                self.Encoder1object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.Encoder1object.setChannel(1)
-                self.Encoder1object.setOnPositionChangeHandler(self.Encoder1onPositionChangeCallback)
-                self.Encoder1object.setOnAttachHandler(self.Encoder1onAttachCallback)
-                self.Encoder1object.setOnDetachHandler(self.Encoder1onDetachCallback)
-                self.Encoder1object.setOnErrorHandler(self.Encoder1onErrorCallback)
-                self.Encoder1object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
+                    self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setChannel(EncoderChannel)
+                    self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setOnPositionChangeHandler(self.EncoderInputsList_ListOfOnEncoderOnPositionChangeCallbackFunctionNames[EncoderChannel])
+                    self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setOnAttachHandler(self.EncoderInputsList_ListOfOnAttachCallbackFunctionNames[EncoderChannel])
+                    self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setOnDetachHandler(self.EncoderInputsList_ListOfOnDetachCallbackFunctionNames[EncoderChannel])
+                    self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setOnErrorHandler(self.EncoderInputsList_ListOfOnErrorCallbackFunctionNames[EncoderChannel])
+                    self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
 
-            else:
-                self.EncodersList_PhidgetsEncoderObjects.append("NULL")
-            #########################################################
-            
-            #########################################################
-            if self.EncodersList_ChannelsBeingWatchedList[2] == 1:
-                self.Encoder2object = Encoder()
-                self.EncodersList_PhidgetsEncoderObjects.append(self.Encoder2object)
-                self.Encoder2object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.Encoder2object.setChannel(2)
-                self.Encoder2object.setOnPositionChangeHandler(self.Encoder2onPositionChangeCallback)
-                self.Encoder2object.setOnAttachHandler(self.Encoder2onAttachCallback)
-                self.Encoder2object.setOnDetachHandler(self.Encoder2onDetachCallback)
-                self.Encoder2object.setOnErrorHandler(self.Encoder2onErrorCallback)
-                self.Encoder2object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
-
-            else:
-                self.EncodersList_PhidgetsEncoderObjects.append("NULL")
-            #########################################################
-            
-            #########################################################
-            if self.EncodersList_ChannelsBeingWatchedList[3] == 1:
-                self.Encoder3object = Encoder()
-                self.EncodersList_PhidgetsEncoderObjects.append(self.Encoder3object)
-                self.Encoder3object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.Encoder3object.setChannel(3)
-                self.Encoder3object.setOnPositionChangeHandler(self.Encoder3onPositionChangeCallback)
-                self.Encoder3object.setOnAttachHandler(self.Encoder3onAttachCallback)
-                self.Encoder3object.setOnDetachHandler(self.Encoder3onDetachCallback)
-                self.Encoder3object.setOnErrorHandler(self.Encoder3onErrorCallback)
-                self.Encoder3object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
-
-            else:
-                self.EncodersList_PhidgetsEncoderObjects.append("NULL")
+                else:
+                    self.EncodersList_PhidgetsEncoderObjects.append("NULL")
             #########################################################
 
             #########################################################
-            if self.DigitalInputsList_ChannelsBeingWatchedList[0] == 1:
-                self.DigitalInput0object = DigitalInput()
-                self.DigitalInputsList_PhidgetsDIobjects.append(self.DigitalInput0object)
-                self.DigitalInput0object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.DigitalInput0object.setChannel(0)
-                self.DigitalInput0object.setOnStateChangeHandler(self.DigitalInput0onStateChangeCallback)
-                self.DigitalInput0object.setOnAttachHandler(self.DigitalInput0onAttachCallback)
-                self.DigitalInput0object.setOnDetachHandler(self.DigitalInput0onDetachCallback)
-                self.DigitalInput0object.setOnErrorHandler(self.DigitalInput0onErrorCallback)
-                self.DigitalInput0object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
-            else:
-                self.DigitalInputsList_PhidgetsDIobjects.append("NULL")
-            #########################################################
+            for DigitalInputChannel in range(0, self.NumberOfDigitalInputs):
+                if self.DigitalInputsList_ChannelsBeingWatchedList[DigitalInputChannel] == 1:
+                    self.DigitalInputsList_PhidgetsDIobjects.append(DigitalInput())
 
-            #########################################################
-            if self.DigitalInputsList_ChannelsBeingWatchedList[1] == 1:
-                self.DigitalInput1object = DigitalInput()
-                self.DigitalInputsList_PhidgetsDIobjects.append(self.DigitalInput1object)
-                self.DigitalInput1object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.DigitalInput1object.setChannel(1)
-                self.DigitalInput1object.setOnStateChangeHandler(self.DigitalInput1onStateChangeCallback)
-                self.DigitalInput1object.setOnAttachHandler(self.DigitalInput1onAttachCallback)
-                self.DigitalInput1object.setOnDetachHandler(self.DigitalInput1onDetachCallback)
-                self.DigitalInput1object.setOnErrorHandler(self.DigitalInput1onErrorCallback)
-                self.DigitalInput1object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
-            else:
-                self.DigitalInputsList_PhidgetsDIobjects.append("NULL")
-            #########################################################
-            
-            #########################################################
-            if self.DigitalInputsList_ChannelsBeingWatchedList[2] == 1:
-                self.DigitalInput2object = DigitalInput()
-                self.DigitalInputsList_PhidgetsDIobjects.append(self.DigitalInput2object)
-                self.DigitalInput2object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.DigitalInput2object.setChannel(2)
-                self.DigitalInput2object.setOnStateChangeHandler(self.DigitalInput2onStateChangeCallback)
-                self.DigitalInput2object.setOnAttachHandler(self.DigitalInput2onAttachCallback)
-                self.DigitalInput2object.setOnDetachHandler(self.DigitalInput2onDetachCallback)
-                self.DigitalInput2object.setOnErrorHandler(self.DigitalInput2onErrorCallback)
-                self.DigitalInput2object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
-            else:
-                self.DigitalInputsList_PhidgetsDIobjects.append("NULL")
-            #########################################################
-            
-            #########################################################
-            if self.DigitalInputsList_ChannelsBeingWatchedList[3] == 1:
-                self.DigitalInput3object = DigitalInput()
-                self.DigitalInputsList_PhidgetsDIobjects.append(self.DigitalInput3object)
-                self.DigitalInput3object.setDeviceSerialNumber(self.DesiredSerialNumber)
-                self.DigitalInput3object.setChannel(3)
-                self.DigitalInput3object.setOnStateChangeHandler(self.DigitalInput3onStateChangeCallback)
-                self.DigitalInput3object.setOnAttachHandler(self.DigitalInput3onAttachCallback)
-                self.DigitalInput3object.setOnDetachHandler(self.DigitalInput3onDetachCallback)
-                self.DigitalInput3object.setOnErrorHandler(self.DigitalInput3onErrorCallback)
-                self.DigitalInput3object.openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
-            else:
-                self.DigitalInputsList_PhidgetsDIobjects.append("NULL")
+                    if self.DesiredSerialNumber != -1:
+                        self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].setDeviceSerialNumber(self.DesiredSerialNumber)
+
+                    self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].setChannel(DigitalInputChannel)
+                    self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].setOnStateChangeHandler(self.DigitalInputsList_ListOfonStateChangeCallbackFunctionNames[DigitalInputChannel])
+                    self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].setOnAttachHandler(self.DigitalInputsList_ListOfOnAttachCallbackFunctionNames[DigitalInputChannel])
+                    self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].setOnDetachHandler(self.DigitalInputsList_ListOfOnDetachCallbackFunctionNames[DigitalInputChannel])
+                    self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].setOnErrorHandler(self.DigitalInputsList_ListOfOnErrorCallbackFunctionNames[DigitalInputChannel])
+                    self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].openWaitForAttachment(self.WaitForAttached_TimeoutDuration_Milliseconds)
+                else:
+                    self.DigitalInputsList_PhidgetsDIobjects.append("NULL")
             #########################################################
 
             self.PhidgetsDeviceConnectedFlag = 1
@@ -613,74 +567,81 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
             if self.UsePhidgetsLoggingInternalToThisClassObjectFlag == 1:
                 try:
                     Log.enable(LogLevel.PHIDGET_LOG_INFO, os.getcwd() + "\Phidgets4EncoderAndDInput1047_ReubenPython2and3Class_PhidgetLog_INFO.txt")
-                    print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__Enabled Phidget Logging.")
+                    print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Enabled Phidget Logging.")
                 except PhidgetException as e:
-                    print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__Failed to enable Phidget Logging, Phidget Exception %i: %s" % (e.code, e.details))
+                    print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to enable Phidget Logging, Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
-                self.DetectedDeviceName = self.Encoder0object.getDeviceName()
-                print("DetectedDeviceName: " + self.DetectedDeviceName)
+                self.DetectedDeviceName = self.EncodersList_PhidgetsEncoderObjects[0].getDeviceName()
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DetectedDeviceName: " + self.DetectedDeviceName)
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceName', Phidget Exception %i: %s" % (e.code, e.details))
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to call 'getDeviceName', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
-                self.DetectedDeviceSerialNumber = self.Encoder0object.getDeviceSerialNumber()
-                print("DetectedDeviceSerialNumber: " + str(self.DetectedDeviceSerialNumber))
+                self.DetectedDeviceSerialNumber = self.EncodersList_PhidgetsEncoderObjects[0].getDeviceSerialNumber()
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DetectedDeviceSerialNumber: " + str(self.DetectedDeviceSerialNumber))
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceSerialNumber', Phidget Exception %i: %s" % (e.code, e.details))
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to call 'getDeviceSerialNumber', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
-                self.DetectedDeviceID = self.Encoder0object.getDeviceID()
-                print("DetectedDeviceID: " + str(self.DetectedDeviceID))
+                self.DetectedDeviceID = self.EncodersList_PhidgetsEncoderObjects[0].getDeviceID()
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DetectedDeviceID: " + str(self.DetectedDeviceID))
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceID', Phidget Exception %i: %s" % (e.code, e.details))
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to call 'getDeviceID', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
-                self.DetectedDeviceVersion = self.Encoder0object.getDeviceVersion()
-                print("DetectedDeviceVersion: " + str(self.DetectedDeviceVersion))
+                self.DetectedDeviceVersion = self.EncodersList_PhidgetsEncoderObjects[0].getDeviceVersion()
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DetectedDeviceVersion: " + str(self.DetectedDeviceVersion))
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceVersion', Phidget Exception %i: %s" % (e.code, e.details))
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to call 'getDeviceVersion', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
-                self.DetectedDeviceLibraryVersion = self.Encoder0object.getLibraryVersion()
-                print("DetectedDeviceLibraryVersion: " + str(self.DetectedDeviceLibraryVersion))
+                self.DetectedDeviceLibraryVersion = self.EncodersList_PhidgetsEncoderObjects[0].getLibraryVersion()
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: DetectedDeviceLibraryVersion: " + str(self.DetectedDeviceLibraryVersion))
 
             except PhidgetException as e:
-                print("Failed to call 'getLibraryVersion', Phidget Exception %i: %s" % (e.code, e.details))
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Failed to call 'getLibraryVersion', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
-            if self.DetectedDeviceSerialNumber != self.DesiredSerialNumber:
-                print("The desired Serial Number (" + str(self.DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.DetectedDeviceSerialNumber) + ").")
-                input("Press any key (and enter) to exit.")
-                sys.exit()
+            if self.DesiredSerialNumber != -1:
+                if self.DetectedDeviceSerialNumber != self.DesiredSerialNumber:
+                    print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: The desired Serial Number (" + str(self.DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.DetectedDeviceSerialNumber) + ").")
+                    input("Press any key (and enter) to exit.")
+                    sys.exit()
             #########################################################
 
-            ##########################################
+            #########################################################
             self.MainThread_ThreadingObject = threading.Thread(target=self.MainThread, args=())
             self.MainThread_ThreadingObject.start()
-            ##########################################
+            #########################################################
 
-            ##########################################
+            #########################################################
             if self.USE_GUI_FLAG == 1:
                 self.StartGUI(self.root)
-            ##########################################
+            #########################################################
 
+            #########################################################
+            time.sleep(0.25)
+            #########################################################
+
+            #########################################################
             self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 1
+            #########################################################
 
         #########################################################
         #########################################################
@@ -691,7 +652,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     #######################################################################################################################
     #######################################################################################################################
     def __del__(self):
-        dummy_var = 0
+        pass
     #######################################################################################################################
     #######################################################################################################################
 
@@ -1255,24 +1216,29 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     ##########################################################################################################
     def GetMostRecentDataDict(self):
 
-        self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
-                                             ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
-                                             ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
-                                             ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
-                                             ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
-                                             ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
-                                             ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
-                                             ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
-                                             ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
-                                             ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
-                                             ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
-                                             ("DigitalInputsList_State", self.DigitalInputsList_State),
-                                             ("DigitalInputsList_ErrorCallbackFiredFlag", self.DigitalInputsList_ErrorCallbackFiredFlag),
-                                             ("Time", self.CurrentTime_CalculatedFromMainThread)])
-
-        return self.MostRecentDataDict
+        if self.EXIT_PROGRAM_FLAG == 0:
+            
+            self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
+                                                 ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
+                                                 ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
+                                                 ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
+                                                 ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
+                                                 ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
+                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
+                                                 ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
+                                                 ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
+                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
+                                                 ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
+                                                 ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
+                                                 ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
+                                                 ("DigitalInputsList_State", self.DigitalInputsList_State),
+                                                 ("DigitalInputsList_ErrorCallbackFiredFlag", self.DigitalInputsList_ErrorCallbackFiredFlag),
+                                                 ("Time", self.CurrentTime_CalculatedFromMainThread)])
+    
+            return self.MostRecentDataDict
+        
+        else:
+            return dict() #So that we're not returning variables during the close-down process.
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1295,6 +1261,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     ##########################################################################################################
 
     ##########################################################################################################
+    ##########################################################################################################
     ########################################################################################################## unicorn
     def MainThread(self):
 
@@ -1304,39 +1271,52 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
         self.StartingTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString()
 
-        ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
         while self.EXIT_PROGRAM_FLAG == 0:
 
-            ###############################################
+            ##########################################################################################################
             self.CurrentTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString() - self.StartingTime_CalculatedFromMainThread
-            ###############################################
+            ##########################################################################################################
 
-            ###############################################
+            ##########################################################################################################
             for EncoderChannel, NeedsToBeHomedFlag in enumerate(self.EncodersList_NeedsToBeHomedFlag):
                 if NeedsToBeHomedFlag == 1:
                     SuccessFlag = self.EncoderHome(EncoderChannel)
 
                     if SuccessFlag == 1:
                         self.EncodersList_NeedsToBeHomedFlag[EncoderChannel] = 0
-            ###############################################
+            ##########################################################################################################
 
-            ############################################### USE THE TIME.SLEEP() TO SET THE LOOP FREQUENCY
-            ###############################################
-            ###############################################
+            ########################################################################################################## USE THE TIME.SLEEP() TO SET THE LOOP FREQUENCY
             self.UpdateFrequencyCalculation_MainThread()
 
             if self.MainThread_TimeToSleepEachLoop > 0.0:
                 time.sleep(self.MainThread_TimeToSleepEachLoop)
+            ##########################################################################################################
 
-            ###############################################
-            ###############################################
-            ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
 
-        ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
+        for EncoderChannel in range(0, self.NumberOfEncoders):
+            if self.EncodersList_ChannelsBeingWatchedList[EncoderChannel] == 1:
+                self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].close()
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        for DigitalInputChannel in range(0, self.NumberOfDigitalInputs):
+            if self.DigitalInputsList_ChannelsBeingWatchedList[DigitalInputChannel] == 1:
+                self.DigitalInputsList_PhidgetsDIobjects[DigitalInputChannel].close()
+        ##########################################################################################################
+        ##########################################################################################################
 
         self.MyPrint_WithoutLogFile("Finished MainThread for Phidgets4EncoderAndDInput1047_ReubenPython2and3Class object.")
-        
         self.MainThread_still_running_flag = 0
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1353,34 +1333,23 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent=None):
+    def StartGUI(self, GuiParent):
 
-        GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        GUI_Thread_ThreadingObject.start()
+        self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
+        self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
+        self.GUI_Thread_ThreadingObject.start()
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def GUI_Thread(self, parent=None):
+    def GUI_Thread(self, parent):
 
         print("Starting the GUI_Thread for Phidgets4EncoderAndDInput1047_ReubenPython2and3Class object.")
 
         ###################################################
-        if parent == None:  #This class object owns root and must handle it properly
-            self.root = Tk()
-            self.parent = self.root
-
-            ################################################### SET THE DEFAULT FONT FOR ALL WIDGETS CREATED AFTTER/BELOW THIS CALL
-            default_font = tkFont.nametofont("TkDefaultFont")
-            default_font.configure(size=8)
-            self.root.option_add("*Font", default_font)
-            ###################################################
-
-        else:
-            self.root = parent
-            self.parent = parent
+        self.root = parent
+        self.parent = parent
         ###################################################
 
         ###################################################
@@ -1404,65 +1373,43 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         self.TKinter_LightRedColor = '#%02x%02x%02x' % (255, 150, 150) #RGB
         self.TKinter_LightYellowColor = '#%02x%02x%02x' % (255, 255, 150)  # RGB
         self.TKinter_DefaultGrayColor = '#%02x%02x%02x' % (240, 240, 240)  # RGB
-        self.TkinterScaleWidth = 10
-        self.TkinterScaleLength = 250
         ###################################################
 
         #################################################
-        self.device_info_label = Label(self.myFrame, text="Device Info", width=50) #, font=("Helvetica", 16)
+        self.DeviceInfo_Label = Label(self.myFrame, text="Device Info", width=50) #, font=("Helvetica", 16)
 
-
-        self.device_info_label["text"] = self.NameToDisplay_UserSet + \
+        self.DeviceInfo_Label["text"] = self.NameToDisplay_UserSet + \
                                          "\nDevice Name: " + self.DetectedDeviceName + \
                                          "\nDevice Serial Number: " + str(self.DetectedDeviceSerialNumber) + \
                                          "\nDevice Version: " + str(self.DetectedDeviceVersion)
 
-        self.device_info_label.grid(row=0, column=0, padx=5, pady=1, columnspan=1, rowspan=1)
+        self.DeviceInfo_Label.grid(row=0, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
+        #################################################
+        
+        #################################################
+        self.EncoderHomingButtonsFrame = Frame(self.myFrame)
+        self.EncoderHomingButtonsFrame.grid(row = 1, column = 0, padx = 10, pady = 10, rowspan = 1, columnspan = 1)
+
+        self.EncodersList_HomingButtonObjects = []
+        for EncoderChannel in range(0, self.NumberOfEncoders):
+            self.EncodersList_HomingButtonObjects.append(Button(self.EncoderHomingButtonsFrame, text="Home Encoder " + str(EncoderChannel), state="normal", width=15, command=lambda i=EncoderChannel: self.EncodersList_HomingButtonObjectsResponse(i)))
+            self.EncodersList_HomingButtonObjects[EncoderChannel].grid(row=1, column=EncoderChannel, padx=1, pady=1, columnspan=1, rowspan=1)
         #################################################
 
         #################################################
         self.Encoders_Label = Label(self.myFrame, text="Encoders_Label", width=120)
-        self.Encoders_Label.grid(row=0, column=1, padx=5, pady=1, columnspan=1, rowspan=10)
-        #################################################
-        
+        self.Encoders_Label.grid(row=2, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
         #################################################
 
-        self.EncoderHomingButtonsFrame = Frame(self.myFrame)
-
-        #if self.UseBorderAroundThisGuiObjectFlag == 1:
-        #    self.myFrame["borderwidth"] = 2
-        #    self.myFrame["relief"] = "ridge"
-
-        self.EncoderHomingButtonsFrame.grid(row = 1, column = 0, padx = 1, pady = 1, rowspan = 1, columnspan = 1)
-
-        self.EncodersList_HomingButtonObjects = []
-        for EncoderChannel in range(0, 4):
-            self.EncodersList_HomingButtonObjects.append(Button(self.EncoderHomingButtonsFrame, text="Home Encoder " + str(EncoderChannel), state="normal", width=15, command=lambda i=EncoderChannel: self.EncodersList_HomingButtonObjectsResponse(i)))
-            self.EncodersList_HomingButtonObjects[EncoderChannel].grid(row=1, column=EncoderChannel, padx=1, pady=1)
         #################################################
-
-        ########################
-        self.PrintToGui_Label = Label(self.myFrame, text="PrintToGui_Label", width=75)
+        self.PrintToGui_Label = Label(self.myFrame, text="PrintToGui_Label", width=125)
         if self.EnableInternal_MyPrint_Flag == 1:
-            self.PrintToGui_Label.grid(row=0, column=2, padx=1, pady=1, columnspan=1, rowspan=10)
-        ########################
+            self.PrintToGui_Label.grid(row=3, column=0, padx=10, pady=10, columnspan=10, rowspan=10)
+        #################################################
 
-        ########################
-        if self.RootIsOwnedExternallyFlag == 0: #This class object owns root and must handle it properly
-            self.root.protocol("WM_DELETE_WINDOW", self.ExitProgram_Callback)
-
-            self.root.after(self.GUI_RootAfterCallbackInterval_Milliseconds, self.GUI_update_clock)
-            self.GUI_ready_to_be_updated_flag = 1
-            self.root.mainloop()
-        else:
-            self.GUI_ready_to_be_updated_flag = 1
-        ########################
-
-        ########################
-        if self.RootIsOwnedExternallyFlag == 0: #This class object owns root and must handle it properly
-            self.root.quit()  # Stop the GUI thread, MUST BE CALLED FROM GUI_Thread
-            self.root.destroy()  # Close down the GUI thread, MUST BE CALLED FROM GUI_Thread
-        ########################
+        #################################################
+        self.GUI_ready_to_be_updated_flag = 1
+        #################################################
 
     ##########################################################################################################
     ##########################################################################################################
@@ -1513,13 +1460,6 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
                 #######################################################
                 #######################################################
 
-                #######################################################
-                #######################################################
-                if self.RootIsOwnedExternallyFlag == 0:  # This class object owns root and must handle it properly
-                    self.root.after(self.GUI_RootAfterCallbackInterval_Milliseconds, self.GUI_update_clock)
-                #######################################################
-                #######################################################
-
             #######################################################
             #######################################################
             #######################################################
@@ -1534,13 +1474,9 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
     ##########################################################################################################
     ##########################################################################################################
-    def IsInputList(self, input, print_result_flag = 0):
+    def IsInputList(self, InputToCheck):
 
-        result = isinstance(input, list)
-
-        if print_result_flag == 1:
-            self.MyPrint_WithoutLogFile("IsInputList: " + str(result))
-
+        result = isinstance(InputToCheck, list)
         return result
     ##########################################################################################################
     ##########################################################################################################

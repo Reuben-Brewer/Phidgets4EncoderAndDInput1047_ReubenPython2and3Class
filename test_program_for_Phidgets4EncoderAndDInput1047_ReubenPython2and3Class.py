@@ -6,22 +6,29 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision E, 03/13/2022
+Software Revision F, 07/20/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
+###########################################################
 from Phidgets4EncoderAndDInput1047_ReubenPython2and3Class import *
 from MyPrint_ReubenPython2and3Class import *
+###########################################################
 
-import os, sys, platform
-import time, datetime
+###########################################################
+import os
+import sys
+import platform
+import time
+import datetime
 import threading
 import collections
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -30,22 +37,22 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from builtins import raw_input as input
 else:
     from future.builtins import input as input #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
-###############
+###########################################################
 
-###############
+###########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+###########################################################
 
 ###########################################################################################################
 ##########################################################################################################
@@ -146,11 +153,11 @@ def GUI_Thread():
         #################################################
         TabControlObject = ttk.Notebook(root)
 
-        Tab_MainControls = ttk.Frame(TabControlObject)
-        TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
-
         Tab_EncoderAndDI = ttk.Frame(TabControlObject)
         TabControlObject.add(Tab_EncoderAndDI, text='   EncoderAndDI   ')
+
+        Tab_MainControls = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
 
         Tab_MyPrint = ttk.Frame(TabControlObject)
         TabControlObject.add(Tab_MyPrint, text='   MyPrint Terminal   ')
@@ -227,7 +234,7 @@ if __name__ == '__main__':
     USE_GUI_FLAG = 1
 
     global USE_TABS_IN_GUI_FLAG
-    USE_TABS_IN_GUI_FLAG = 0
+    USE_TABS_IN_GUI_FLAG = 1
 
     global USE_EncoderAndDI_FLAG
     USE_EncoderAndDI_FLAG = 1
@@ -259,7 +266,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_ENCODER = 0
     GUI_PADX_ENCODER = 1
-    GUI_PADY_ENCODER = 10
+    GUI_PADY_ENCODER = 1
     GUI_ROWSPAN_ENCODER = 1
     GUI_COLUMNSPAN_ENCODER = 1
 
@@ -273,7 +280,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_MYPRINT = 0
     GUI_PADX_MYPRINT = 1
-    GUI_PADY_MYPRINT = 10
+    GUI_PADY_MYPRINT = 1
     GUI_ROWSPAN_MYPRINT = 1
     GUI_COLUMNSPAN_MYPRINT = 1
     #################################################
@@ -293,7 +300,7 @@ if __name__ == '__main__':
     global root
 
     global root_Xpos
-    root_Xpos = 70
+    root_Xpos = 900
 
     global root_Ypos
     root_Ypos = 0
@@ -322,6 +329,7 @@ if __name__ == '__main__':
     EncoderAndDI_OPEN_FLAG = -1
 
     global EncoderAndDI_MostRecentDict
+    EncoderAndDI_MostRecentDict = dict()
 
     global EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks
     EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks = [-11111.0] * 4
@@ -402,7 +410,7 @@ if __name__ == '__main__':
     #################################################
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict
     Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_EncoderAndDI_FLAG),
-                                    ("root", Tab_EncoderAndDI), #root Tab_EncoderAndDI
+                                    ("root", Tab_EncoderAndDI),
                                     ("EnableInternal_MyPrint_Flag", 1),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
@@ -415,7 +423,7 @@ if __name__ == '__main__':
 
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict
     Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                                ("DesiredSerialNumber", 641383), #CHANGE THIS TO MATCH YOUR UNIQUE SERIAL NUMBER
+                                                                                ("DesiredSerialNumber", -1), #-1 MEANS ANY SN, CHANGE THIS TO MATCH YOUR UNIQUE SERIAL NUMBER
                                                                                 ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
                                                                                 ("NameToDisplay_UserSet", "Reuben's Test Encoders Board"),
                                                                                 ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
@@ -429,7 +437,6 @@ if __name__ == '__main__':
     if USE_EncoderAndDI_FLAG == 1:
         try:
             Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject = Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict)
-            time.sleep(0.25)
             EncoderAndDI_OPEN_FLAG = Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -461,7 +468,6 @@ if __name__ == '__main__':
 
         try:
             MyPrint_ReubenPython2and3ClassObject = MyPrint_ReubenPython2and3Class(MyPrint_ReubenPython2and3ClassObject_setup_dict)
-            time.sleep(0.25)
             MYPRINT_OPEN_FLAG = MyPrint_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -500,8 +506,8 @@ if __name__ == '__main__':
         CurrentTime_MainLoopThread = getPreciseSecondsTimeStampString() - StartingTime_MainLoopThread
         ###################################################
 
-        ###################################################
-        if USE_EncoderAndDI_FLAG == 1:
+        ################################################### GET's
+        if EncoderAndDI_OPEN_FLAG == 1:
 
             EncoderAndDI_MostRecentDict = Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.GetMostRecentDataDict()
 
