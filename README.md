@@ -5,11 +5,14 @@ Phidgets4EncoderAndDInput1047_ReubenPython2and3Class
 Wrapper (including ability to hook to Tkinter GUI) to control Phidget Encoder HighSpeed 4-Input (4 quadrature encoders and 4 digital inputs) 1047_2B (non VINT).
 
 From Phidgets' website:
+
 "The PhidgetEncoder Highspeed 4-Input interfaces with any 5V quadrature encoder.
 A quadrature encoder is the most commonly used feedback device for a DC or stepper motor.
 With an encoder, you can keep track of how far your motor has turned, which then allows you to control the
 position and velocity in your code. This Phidget connects to your computer via USB.
+
 Features:
+
 Four digital inputs for reading limit switches or buttons
 Works with all 0-5V quadrature encoders - simultaneously read four incremental encoders with
 line driver, open collector, or push-pull output circuits
@@ -32,7 +35,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision F, 07/20/2022
+Software Revision G, 08/29/2022
 
 Verified working on: 
 
@@ -52,7 +55,7 @@ Raspberry Pi Buster
 
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['future.builtins', 'MyPrint_ReubenPython2and3Class']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
 
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
 
