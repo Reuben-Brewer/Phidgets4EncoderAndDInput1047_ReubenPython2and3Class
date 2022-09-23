@@ -11,9 +11,7 @@ A quadrature encoder is the most commonly used feedback device for a DC or stepp
 With an encoder, you can keep track of how far your motor has turned, which then allows you to control the
 position and velocity in your code. This Phidget connects to your computer via USB.
 
-Features:
-
-Four digital inputs for reading limit switches or buttons
+Features: Four digital inputs for reading limit switches or buttons
 Works with all 0-5V quadrature encoders - simultaneously read four incremental encoders with
 line driver, open collector, or push-pull output circuits
 Read at speeds of up to 250,000 quadrature cycles per second
@@ -35,7 +33,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision G, 08/29/2022
+Software Revision H, 09/21/2022
 
 Verified working on: 
 
