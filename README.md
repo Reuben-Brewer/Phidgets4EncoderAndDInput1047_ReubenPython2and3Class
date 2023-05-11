@@ -13,12 +13,17 @@ position and velocity in your code. This Phidget connects to your computer via U
 
 Features:
 
-Four digital inputs for reading limit switches or buttons
+Four digital inputs for reading limit switches or buttons.
+
 Works with all 0-5V quadrature encoders - simultaneously read four incremental encoders with
-line driver, open collector, or push-pull output circuits
-Read at speeds of up to 250,000 quadrature cycles per second
+line driver, open collector, or push-pull output circuits.
+
+Read at speeds of up to 250,000 quadrature cycles per second.
+
 Power Saving Options - You can turn it off via software when it's not turning.
+
 While disabled, this board draws 30mA of current.
+
 Reports a timestamp in milliseconds for each position change event, for easy velocity calculation."
 
 Phidget Encoder HighSpeed 4-Input
