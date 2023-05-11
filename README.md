@@ -11,7 +11,9 @@ A quadrature encoder is the most commonly used feedback device for a DC or stepp
 With an encoder, you can keep track of how far your motor has turned, which then allows you to control the
 position and velocity in your code. This Phidget connects to your computer via USB.
 
-Features: Four digital inputs for reading limit switches or buttons
+Features:
+
+Four digital inputs for reading limit switches or buttons
 Works with all 0-5V quadrature encoders - simultaneously read four incremental encoders with
 line driver, open collector, or push-pull output circuits
 Read at speeds of up to 250,000 quadrature cycles per second
@@ -33,7 +35,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision H, 09/21/2022
+Software Revision I, 05/10/2023
 
 Verified working on: 
 
@@ -57,7 +59,7 @@ Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_T
 
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
 
 https://pypi.org/project/Phidget22/#files
 
