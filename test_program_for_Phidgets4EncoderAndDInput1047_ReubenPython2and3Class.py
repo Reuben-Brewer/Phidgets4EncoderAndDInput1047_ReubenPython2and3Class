@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision H, 09/21/2022
+Software Revision I, 05/10/2023
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -58,19 +58,6 @@ def getPreciseSecondsTimeStampString():
 
 ##########################################################################################################
 ##########################################################################################################
-def TestButtonResponse():
-    global MyPrint_ReubenPython2and3ClassObject
-    global USE_MYPRINT_FLAG
-
-    if USE_MYPRINT_FLAG == 1:
-        MyPrint_ReubenPython2and3ClassObject.my_print("Test Button was Pressed!")
-    else:
-        print("Test Button was Pressed!")
-##########################################################################################################
-##########################################################################################################
-
-##########################################################################################################
-##########################################################################################################
 def GUI_update_clock():
     global root
     global EXIT_PROGRAM_FLAG
@@ -78,8 +65,8 @@ def GUI_update_clock():
     global USE_GUI_FLAG
 
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject
-    global EncoderAndDI_OPEN_FLAG
-    global SHOW_IN_GUI_EncoderAndDI_FLAG
+    global Phidgets4EncoderAndDInput1047_OPEN_FLAG
+    global SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG
 
     global MyPrint_ReubenPython2and3ClassObject
     global MYPRINT_OPEN_FLAG
@@ -91,7 +78,7 @@ def GUI_update_clock():
         #########################################################
 
             #########################################################
-            if EncoderAndDI_OPEN_FLAG == 1 and SHOW_IN_GUI_EncoderAndDI_FLAG == 1:
+            if Phidgets4EncoderAndDInput1047_OPEN_FLAG == 1 and SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG == 1:
                 Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.GUI_update_clock()
             #########################################################
 
@@ -139,15 +126,15 @@ def GUI_Thread():
     #################################################
     global TabControlObject
     global Tab_MainControls
-    global Tab_EncoderAndDI
+    global Tab_Phidgets4EncoderAndDInput1047
     global Tab_MyPrint
 
     if USE_TABS_IN_GUI_FLAG == 1:
         #################################################
         TabControlObject = ttk.Notebook(root)
 
-        Tab_EncoderAndDI = ttk.Frame(TabControlObject)
-        TabControlObject.add(Tab_EncoderAndDI, text='   EncoderAndDI   ')
+        Tab_Phidgets4EncoderAndDInput1047 = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_Phidgets4EncoderAndDInput1047, text='   EncoderAndDI   ')
 
         Tab_MainControls = ttk.Frame(TabControlObject)
         TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
@@ -165,16 +152,11 @@ def GUI_Thread():
     else:
         #################################################
         Tab_MainControls = root
-        Tab_EncoderAndDI = root
+        Tab_Phidgets4EncoderAndDInput1047 = root
         Tab_MyPrint = root
         #################################################
 
     #################################################
-    #################################################
-
-    #################################################
-    TestButton = Button(Tab_MainControls, text='Test Button', state="normal", width=20, command=lambda i=1: TestButtonResponse())
-    TestButton.grid(row=0, column=0, padx=5, pady=1)
     #################################################
 
     ################################################# THIS BLOCK MUST COME 2ND-TO-LAST IN def GUI_Thread() IF USING TABS.
@@ -229,8 +211,8 @@ if __name__ == '__main__':
     global USE_TABS_IN_GUI_FLAG
     USE_TABS_IN_GUI_FLAG = 1
 
-    global USE_EncoderAndDI_FLAG
-    USE_EncoderAndDI_FLAG = 1
+    global USE_Phidgets4EncoderAndDInput1047_FLAG
+    USE_Phidgets4EncoderAndDInput1047_FLAG = 1
 
     global USE_MYPRINT_FLAG
     USE_MYPRINT_FLAG = 1
@@ -239,8 +221,8 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    global SHOW_IN_GUI_EncoderAndDI_FLAG
-    SHOW_IN_GUI_EncoderAndDI_FLAG = 1
+    global SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG
+    SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG = 1
 
     global SHOW_IN_GUI_MYPRINT_FLAG
     SHOW_IN_GUI_MYPRINT_FLAG = 1
@@ -249,19 +231,19 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    global GUI_ROW_ENCODER
-    global GUI_COLUMN_ENCODER
-    global GUI_PADX_ENCODER
-    global GUI_PADY_ENCODER
-    global GUI_ROWSPAN_ENCODER
-    global GUI_COLUMNSPAN_ENCODER
-    GUI_ROW_ENCODER = 1
+    global GUI_ROW_Phidgets4EncoderAndDInput1047
+    global GUI_COLUMN_Phidgets4EncoderAndDInput1047
+    global GUI_PADX_Phidgets4EncoderAndDInput1047
+    global GUI_PADY_Phidgets4EncoderAndDInput1047
+    global GUI_ROWSPAN_Phidgets4EncoderAndDInput1047
+    global GUI_COLUMNSPAN_Phidgets4EncoderAndDInput1047
+    GUI_ROW_Phidgets4EncoderAndDInput1047 = 1
 
-    GUI_COLUMN_ENCODER = 0
-    GUI_PADX_ENCODER = 1
-    GUI_PADY_ENCODER = 1
-    GUI_ROWSPAN_ENCODER = 1
-    GUI_COLUMNSPAN_ENCODER = 1
+    GUI_COLUMN_Phidgets4EncoderAndDInput1047 = 0
+    GUI_PADX_Phidgets4EncoderAndDInput1047 = 1
+    GUI_PADY_Phidgets4EncoderAndDInput1047 = 1
+    GUI_ROWSPAN_Phidgets4EncoderAndDInput1047 = 1
+    GUI_COLUMNSPAN_Phidgets4EncoderAndDInput1047 = 1
 
     global GUI_ROW_MYPRINT
     global GUI_COLUMN_MYPRINT
@@ -306,7 +288,7 @@ if __name__ == '__main__':
 
     global TabControlObject
     global Tab_MainControls
-    global Tab_EncoderAndDI
+    global Tab_Phidgets4EncoderAndDInput1047
     global Tab_MyPrint
 
     global GUI_RootAfterCallbackInterval_Milliseconds
@@ -318,59 +300,59 @@ if __name__ == '__main__':
     #################################################
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject
 
-    global EncoderAndDI_OPEN_FLAG
-    EncoderAndDI_OPEN_FLAG = -1
+    global Phidgets4EncoderAndDInput1047_OPEN_FLAG
+    Phidgets4EncoderAndDInput1047_OPEN_FLAG = -1
 
-    global EncoderAndDI_MostRecentDict
-    EncoderAndDI_MostRecentDict = dict()
+    global Phidgets4EncoderAndDInput1047_MostRecentDict
+    Phidgets4EncoderAndDInput1047_MostRecentDict = dict()
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks
-    EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_EncoderTicks
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_EncoderTicks = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Position_Rev
-    EncoderAndDI_MostRecentDict_EncodersList_Position_Rev = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Position_Degrees
-    EncoderAndDI_MostRecentDict_EncodersList_Position_Degrees = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Degrees
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Degrees = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_EncoderTicks
-    EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_EncoderTicks = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_EncoderTicks
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_EncoderTicks = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_Rev
-    EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_Rev = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_Rev
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_Rev = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_Degrees
-    EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_Degrees = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_Degrees
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_Degrees = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Raw
-    EncoderAndDI_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Raw = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Raw
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Raw = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Speed_RPM_Raw
-    EncoderAndDI_MostRecentDict_EncodersList_Speed_RPM_Raw = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Raw
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Raw = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Speed_RPS_Raw
-    EncoderAndDI_MostRecentDict_EncodersList_Speed_RPS_Raw = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Raw
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Raw = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Filtered
-    EncoderAndDI_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Filtered = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Filtered
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Filtered = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Speed_RPM_Filtered
-    EncoderAndDI_MostRecentDict_EncodersList_Speed_RPM_Filtered = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Filtered
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Filtered = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_Speed_RPS_Filtered
-    EncoderAndDI_MostRecentDict_EncodersList_Speed_RPS_Filtered = [-11111.0] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered = [-11111.0] * 4
 
-    global EncoderAndDI_MostRecentDict_EncodersList_ErrorCallbackFiredFlag
-    EncoderAndDI_MostRecentDict_EncodersList_ErrorCallbackFiredFlag = [-1] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_ErrorCallbackFiredFlag
+    Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_ErrorCallbackFiredFlag = [-1] * 4
 
-    global EncoderAndDI_MostRecentDict_DigitalInputsList_State
-    EncoderAndDI_MostRecentDict_DigitalInputsList_State = [-1] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_DigitalInputsList_State
+    Phidgets4EncoderAndDInput1047_MostRecentDict_DigitalInputsList_State = [-1] * 4
 
-    global EncoderAndDI_MostRecentDict_DigitalInputsList_ErrorCallbackFiredFlag
-    EncoderAndDI_MostRecentDict_DigitalInputsList_ErrorCallbackFiredFlag = [-1] * 4
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_DigitalInputsList_ErrorCallbackFiredFlag
+    Phidgets4EncoderAndDInput1047_MostRecentDict_DigitalInputsList_ErrorCallbackFiredFlag = [-1] * 4
 
-    global EncoderAndDI_MostRecentDict_Time
-    EncoderAndDI_MostRecentDict_Time = -11111.0
+    global Phidgets4EncoderAndDInput1047_MostRecentDict_Time
+    Phidgets4EncoderAndDInput1047_MostRecentDict_Time = -11111.0
     #################################################
     #################################################
 
@@ -394,7 +376,7 @@ if __name__ == '__main__':
     else:
         root = None
         Tab_MainControls = None
-        Tab_EncoderAndDI = None
+        Tab_Phidgets4EncoderAndDInput1047 = None
         Tab_MyPrint = None
     #################################################
     #################################################
@@ -402,17 +384,17 @@ if __name__ == '__main__':
     #################################################
     #################################################
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict
-    Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_EncoderAndDI_FLAG),
-                                    ("root", Tab_EncoderAndDI),
+    Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG),
+                                    ("root", Tab_Phidgets4EncoderAndDInput1047),
                                     ("EnableInternal_MyPrint_Flag", 1),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
-                                    ("GUI_ROW", GUI_ROW_ENCODER),
-                                    ("GUI_COLUMN", GUI_COLUMN_ENCODER),
-                                    ("GUI_PADX", GUI_PADX_ENCODER),
-                                    ("GUI_PADY", GUI_PADY_ENCODER),
-                                    ("GUI_ROWSPAN", GUI_ROWSPAN_ENCODER),
-                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_ENCODER)])
+                                    ("GUI_ROW", GUI_ROW_Phidgets4EncoderAndDInput1047),
+                                    ("GUI_COLUMN", GUI_COLUMN_Phidgets4EncoderAndDInput1047),
+                                    ("GUI_PADX", GUI_PADX_Phidgets4EncoderAndDInput1047),
+                                    ("GUI_PADY", GUI_PADY_Phidgets4EncoderAndDInput1047),
+                                    ("GUI_ROWSPAN", GUI_ROWSPAN_Phidgets4EncoderAndDInput1047),
+                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_Phidgets4EncoderAndDInput1047)])
 
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict
     Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict),
@@ -427,10 +409,10 @@ if __name__ == '__main__':
                                                                                 ("EncodersList_SpeedExponentialFilterLambda", [0.1, 0.1, 0.1, 0.1]),
                                                                                 ("DigitalInputsList_ChannelsBeingWatchedList", [1, 1, 1, 1])])
 
-    if USE_EncoderAndDI_FLAG == 1:
+    if USE_Phidgets4EncoderAndDInput1047_FLAG == 1:
         try:
             Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject = Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_setup_dict)
-            EncoderAndDI_OPEN_FLAG = Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+            Phidgets4EncoderAndDInput1047_OPEN_FLAG = Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
             exceptions = sys.exc_info()[0]
@@ -472,7 +454,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    if USE_EncoderAndDI_FLAG == 1 and EncoderAndDI_OPEN_FLAG != 1:
+    if USE_Phidgets4EncoderAndDInput1047_FLAG == 1 and Phidgets4EncoderAndDInput1047_OPEN_FLAG != 1:
         print("Failed to open Phidgets4EncoderAndDInput1047_ReubenPython2and3Class.")
         ExitProgram_Callback()
     #################################################
@@ -488,45 +470,51 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
+    #################################################
     print("Starting main loop 'test_program_for_Phidgets4EncoderAndDInput1047_ReubenPython2and3Class.")
     StartingTime_MainLoopThread = getPreciseSecondsTimeStampString()
 
     while(EXIT_PROGRAM_FLAG == 0):
 
-        ###################################################
+        #################################################
+        #################################################
         CurrentTime_MainLoopThread = getPreciseSecondsTimeStampString() - StartingTime_MainLoopThread
-        ###################################################
+        #################################################
+        #################################################
 
-        ################################################### GET's
-        if EncoderAndDI_OPEN_FLAG == 1:
+        ################################################# GET's
+        #################################################
+        if Phidgets4EncoderAndDInput1047_OPEN_FLAG == 1:
 
-            EncoderAndDI_MostRecentDict = Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.GetMostRecentDataDict()
+            Phidgets4EncoderAndDInput1047_MostRecentDict = Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.GetMostRecentDataDict()
 
-            if "Time" in EncoderAndDI_MostRecentDict:
-                EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks = EncoderAndDI_MostRecentDict["EncodersList_Position_EncoderTicks"]
-                EncoderAndDI_MostRecentDict_EncodersList_Position_Rev = EncoderAndDI_MostRecentDict["EncodersList_Position_Rev"]
-                EncoderAndDI_MostRecentDict_EncodersList_Position_Degrees = EncoderAndDI_MostRecentDict["EncodersList_Position_Degrees"]
-                EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_EncoderTicks = EncoderAndDI_MostRecentDict["EncodersList_IndexPosition_EncoderTicks"]
-                EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_Rev = EncoderAndDI_MostRecentDict["EncodersList_IndexPosition_Rev"]
-                EncoderAndDI_MostRecentDict_EncodersList_IndexPosition_Degrees = EncoderAndDI_MostRecentDict["EncodersList_IndexPosition_Degrees"]
-                EncoderAndDI_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Raw = EncoderAndDI_MostRecentDict["EncodersList_Speed_EncoderTicksPerSecond_Raw"]
-                EncoderAndDI_MostRecentDict_EncodersList_Speed_RPM_Raw = EncoderAndDI_MostRecentDict["EncodersList_Speed_RPM_Raw"]
-                EncoderAndDI_MostRecentDict_EncodersList_Speed_RPS_Raw = EncoderAndDI_MostRecentDict["EncodersList_Speed_RPS_Raw"]
-                EncoderAndDI_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Filtered = EncoderAndDI_MostRecentDict["EncodersList_Speed_EncoderTicksPerSecond_Filtered"]
-                EncoderAndDI_MostRecentDict_EncodersList_Speed_RPM_Filtered = EncoderAndDI_MostRecentDict["EncodersList_Speed_RPM_Filtered"]
-                EncoderAndDI_MostRecentDict_EncodersList_Speed_RPS_Filtered = EncoderAndDI_MostRecentDict["EncodersList_Speed_RPS_Filtered"]
-                EncoderAndDI_MostRecentDict_EncodersList_ErrorCallbackFiredFlag = EncoderAndDI_MostRecentDict["EncodersList_ErrorCallbackFiredFlag"]
+            if "Time" in Phidgets4EncoderAndDInput1047_MostRecentDict:
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_EncoderTicks = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Position_EncoderTicks"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Position_Rev"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Degrees = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Position_Degrees"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_EncoderTicks = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_IndexPosition_EncoderTicks"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_Rev = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_IndexPosition_Rev"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_IndexPosition_Degrees = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_IndexPosition_Degrees"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Raw = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Speed_EncoderTicksPerSecond_Raw"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Raw = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Speed_RPM_Raw"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Raw = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Speed_RPS_Raw"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_EncoderTicksPerSecond_Filtered = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Speed_EncoderTicksPerSecond_Filtered"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Filtered = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Speed_RPM_Filtered"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_Speed_RPS_Filtered"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_ErrorCallbackFiredFlag = Phidgets4EncoderAndDInput1047_MostRecentDict["EncodersList_ErrorCallbackFiredFlag"]
 
-                EncoderAndDI_MostRecentDict_DigitalInputsList_State = EncoderAndDI_MostRecentDict["DigitalInputsList_State"]
-                EncoderAndDI_MostRecentDict_DigitalInputsList_ErrorCallbackFiredFlag = EncoderAndDI_MostRecentDict["DigitalInputsList_ErrorCallbackFiredFlag"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_DigitalInputsList_State = Phidgets4EncoderAndDInput1047_MostRecentDict["DigitalInputsList_State"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_DigitalInputsList_ErrorCallbackFiredFlag = Phidgets4EncoderAndDInput1047_MostRecentDict["DigitalInputsList_ErrorCallbackFiredFlag"]
 
-                EncoderAndDI_MostRecentDict_Time = EncoderAndDI_MostRecentDict["Time"]
+                Phidgets4EncoderAndDInput1047_MostRecentDict_Time = Phidgets4EncoderAndDInput1047_MostRecentDict["Time"]
 
-                #print("EncoderAndDI_MostRecentDict: " + str(EncoderAndDI_MostRecentDict))
-                #print("EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks: " + str(EncoderAndDI_MostRecentDict_EncodersList_Position_EncoderTicks))
-        ###################################################
+                #print("Phidgets4EncoderAndDInput1047_MostRecentDict: " + str(Phidgets4EncoderAndDInput1047_MostRecentDict))
+                #print("Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_EncoderTicks: " + str(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_EncoderTicks))
+        #################################################
+        #################################################
 
         time.sleep(0.002)
+    #################################################
     #################################################
     #################################################
 
@@ -535,7 +523,7 @@ if __name__ == '__main__':
     print("Exiting main program 'test_program_for_Phidgets4EncoderAndDInput1047_ReubenPython2and3Class.")
 
     #################################################
-    if EncoderAndDI_OPEN_FLAG == 1:
+    if Phidgets4EncoderAndDInput1047_OPEN_FLAG == 1:
         Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.ExitProgram_Callback()
     #################################################
 

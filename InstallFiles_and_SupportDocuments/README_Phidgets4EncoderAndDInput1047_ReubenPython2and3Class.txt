@@ -30,7 +30,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision H, 09/21/2022
+Software Revision I, 05/10/2023
 
 Verified working on: 
 Python 2.7, 3.8.
@@ -47,7 +47,7 @@ Raspberry Pi Buster
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
 
 https://pypi.org/project/Phidget22/#files
 
