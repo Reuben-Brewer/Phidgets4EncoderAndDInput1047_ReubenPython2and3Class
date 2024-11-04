@@ -6,9 +6,9 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision I, 05/10/2023
+Software Revision J, 11/03/2024
 
-Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
+Verified working on: Python 2.7, 3.12 for Windows 8.1, 10, and 11 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
@@ -131,6 +131,8 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         self.EncodersList_Speed_EncoderTicksPerSecond_Filtered = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPM_Filtered = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPS_Filtered = [-11111.0] * self.NumberOfEncoders
+
+        self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag = 0
 
         self.DigitalInputsList_PhidgetsDIobjects = list()
 
@@ -424,19 +426,9 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         #########################################################
         #########################################################
         if "EncodersList_SpeedExponentialFilterLambda" in setup_dict:
-            EncodersList_SpeedExponentialFilterLambda_TEMP = setup_dict["EncodersList_SpeedExponentialFilterLambda"]
-            if self.IsInputList(EncodersList_SpeedExponentialFilterLambda_TEMP) == 1 and len(EncodersList_SpeedExponentialFilterLambda_TEMP)== self.NumberOfEncoders:
-                self.EncodersList_SpeedExponentialFilterLambda = list()
-                for EncoderChannel, SpeedExponentialFilterLambda_TEMP in enumerate(EncodersList_SpeedExponentialFilterLambda_TEMP):
-                    SpeedExponentialFilterLambda = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_SpeedExponentialFilterLambda, EncoderChannel " + str(EncoderChannel), SpeedExponentialFilterLambda_TEMP, 0.0, 1.0)
-                    self.EncodersList_SpeedExponentialFilterLambda.append(SpeedExponentialFilterLambda)
-            else:
-                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
-                return
+            self.Process_EncodersList_SpeedExponentialFilterLambda(setup_dict["EncodersList_SpeedExponentialFilterLambda"])
         else:
-            self.EncodersList_SpeedExponentialFilterLambda = [1.0]*self.NumberOfEncoders #Default to no filtering, new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
-
-        print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
+            self.EncodersList_SpeedExponentialFilterLambda = [1.0] * self.NumberOfEncoders  # Default to no filtering, new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
         #########################################################
         #########################################################
 
@@ -662,67 +654,228 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     #######################################################################################################################
     #######################################################################################################################
 
-    ##########################################################################################################
-    ##########################################################################################################
-    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber):
+    #######################################################################################################################
+    #######################################################################################################################
+    def Process_EncodersList_SpeedExponentialFilterLambda(self, EncodersList_SpeedExponentialFilterLambda_TEMP=[]):
 
         try:
-            InputNumber_ConvertedToFloat = float(InputNumber)
+            #########################################################
+            #########################################################
+            if self.IsInputList(EncodersList_SpeedExponentialFilterLambda_TEMP) == 1 and len(EncodersList_SpeedExponentialFilterLambda_TEMP)== self.NumberOfEncoders:
+                self.EncodersList_SpeedExponentialFilterLambda = list()
+                for EncoderChannel, SpeedExponentialFilterLambda_TEMP in enumerate(EncodersList_SpeedExponentialFilterLambda_TEMP):
+                    SpeedExponentialFilterLambda = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_SpeedExponentialFilterLambda, EncoderChannel " + str(EncoderChannel), SpeedExponentialFilterLambda_TEMP, 0.0, 1.0)
+                    self.EncodersList_SpeedExponentialFilterLambda.append(SpeedExponentialFilterLambda)
+
+                self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag = 1
+            else:
+                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
+                return
+
+            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
+            #########################################################
+            #########################################################
+
         except:
             exceptions = sys.exc_info()[0]
-            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            print("Process_EncodersList_SpeedExponentialFilterLambda Exceptions: %s" % exceptions)
+            traceback.print_exc()
 
+    #######################################################################################################################
+    #######################################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def LimitNumber_IntOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
+
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = int(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def LimitNumber_FloatOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
+
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = float(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber, ExitProgramIfFailureFlag = 0):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
-            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThrough0and1values_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be 0 or 1 (value was " +
-                          str(InputNumber_ConvertedToFloat) +
-                          "). Press any key (and enter) to exit.")
 
-                sys.exit()
+            ##########################################################################################################
+            InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
+            exceptions = sys.exc_info()[0]
+            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a numerical value, Exceptions: %s" % exceptions)
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1.0:
+                return InputNumber_ConvertedToFloat
+
+            else:
+
+                print("PassThrough0and1values_ExitProgramOtherwise Error. '" +
+                              str(InputNameString) +
+                              "' must be 0 or 1 (value was " +
+                              str(InputNumber_ConvertedToFloat) +
+                              "). Press any key (and enter) to exit.")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+
+                else:
+                    return -1
+                ##########################
+
+            ##########################################################################################################
+
+        except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThrough0and1values_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue):
+    ##########################################################################################################
+    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue, ExitProgramIfFailureFlag = 0):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
 
-        try:
-            if InputNumber_ConvertedToFloat >= RangeMinValue and InputNumber_ConvertedToFloat <= RangeMaxValue:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be in the range [" +
-                          str(RangeMinValue) +
-                          ", " +
-                          str(RangeMaxValue) +
-                          "] (value was " +
-                          str(InputNumber_ConvertedToFloat) + "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            InputNumber_ConvertedToFloat_Limited = self.LimitNumber_FloatOutputOnly(RangeMinValue, RangeMaxValue, InputNumber_ConvertedToFloat)
+
+            if InputNumber_ConvertedToFloat_Limited != InputNumber_ConvertedToFloat:
+                print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be in the range [" +
+                      str(RangeMinValue) +
+                      ", " +
+                      str(RangeMaxValue) +
+                      "] (value was " +
+                      str(InputNumber_ConvertedToFloat) + ")")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+                else:
+                    return -11111.0
+                ##########################
+
+            else:
+                return InputNumber_ConvertedToFloat_Limited
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
@@ -779,7 +932,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     ##########################################################################################################
 
     ##########################################################################################################
-    ########################################################################################################## unicorn
+    ##########################################################################################################
     def EncoderGENERALonPositionChangeCallback(self, EncoderChannel, positionChange, timeChangeInMilliseconds, indexTriggered):
 
         ################################
@@ -1223,24 +1376,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     def GetMostRecentDataDict(self):
 
         if self.EXIT_PROGRAM_FLAG == 0:
-            
-            self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
-                                                 ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
-                                                 ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
-                                                 ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
-                                                 ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
-                                                 ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
-                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
-                                                 ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
-                                                 ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
-                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
-                                                 ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
-                                                 ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
-                                                 ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
-                                                 ("DigitalInputsList_State", self.DigitalInputsList_State),
-                                                 ("DigitalInputsList_ErrorCallbackFiredFlag", self.DigitalInputsList_ErrorCallbackFiredFlag),
-                                                 ("Time", self.CurrentTime_CalculatedFromMainThread)])
-    
+
             return deepcopy(self.MostRecentDataDict) #deepcopy IS required as MostRecentDataDict contains lists.
         
         else:
@@ -1286,12 +1422,43 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
             ##########################################################################################################
 
             ##########################################################################################################
+            if self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag == 1:
+
+                for EncoderChannel in range(0, self.NumberOfEncoders):
+                    self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].UpdateFilterParameters(dict([("UseMedianFilterFlag", 0),
+                                                                                                                    ("UseExponentialSmoothingFilterFlag", 1),
+                                                                                                                    ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])]))
+
+            self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag = 0
+            ##########################################################################################################
+
+            ##########################################################################################################
             for EncoderChannel, NeedsToBeHomedFlag in enumerate(self.EncodersList_NeedsToBeHomedFlag):
                 if NeedsToBeHomedFlag == 1:
                     SuccessFlag = self.EncoderHome(EncoderChannel)
 
                     if SuccessFlag == 1:
                         self.EncodersList_NeedsToBeHomedFlag[EncoderChannel] = 0
+            ##########################################################################################################
+
+            ##########################################################################################################
+            self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
+                                                 ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
+                                                 ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
+                                                 ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
+                                                 ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
+                                                 ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
+                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
+                                                 ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
+                                                 ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
+                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
+                                                 ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
+                                                 ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
+                                                 ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
+                                                 ("DigitalInputsList_State", self.DigitalInputsList_State),
+                                                 ("DigitalInputsList_ErrorCallbackFiredFlag", self.DigitalInputsList_ErrorCallbackFiredFlag),
+                                                 ("EncodersList_SpeedExponentialFilterLambda", self.EncodersList_SpeedExponentialFilterLambda),
+                                                 ("Time", self.CurrentTime_CalculatedFromMainThread)])
             ##########################################################################################################
 
             ########################################################################################################## USE THE TIME.SLEEP() TO SET THE LOOP FREQUENCY
@@ -1367,10 +1534,6 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     ##########################################################################################################
     def StartGUI(self, GuiParent):
 
-        #self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        #self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        #self.GUI_Thread_ThreadingObject.start()
-
         self.GUI_Thread(GuiParent)
     ##########################################################################################################
     ##########################################################################################################
@@ -1431,8 +1594,8 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         #################################################
 
         #################################################
-        self.Encoders_Label = Label(self.myFrame, text="Encoders_Label", width=120)
-        self.Encoders_Label.grid(row=2, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
+        self.Data_Label = Label(self.myFrame, text="Data_Label", width=120)
+        self.Data_Label.grid(row=2, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
         #################################################
 
         #################################################
@@ -1467,20 +1630,10 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
                 #######################################################
                 try:
                     #######################################################
-                    self.Encoders_Label["text"] = "Encoder Position Ticks: " + str(self.EncodersList_Position_EncoderTicks) + \
-                                                "\nEncoder Position Degrees: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Position_Degrees, 0, 3) + \
-                                                "\nIndex Pos: " + str(self.EncodersList_IndexPosition_EncoderTicks) + \
-                                                "\nSpeed Ticks/S Raw: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Speed_EncoderTicksPerSecond_Raw, 0, 5)+ \
-                                                "\nSpeed RPM Raw: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Speed_RPM_Raw, 0, 5) + \
-                                                "\nSpeed RPS Raw: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Speed_RPS_Raw, 0, 5) + \
-                                                "\nSpeed Ticks/S Filtered: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Speed_EncoderTicksPerSecond_Filtered, 0, 5)+ \
-                                                "\nSpeed RPM Filtered: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Speed_RPM_Filtered, 0, 5) + \
-                                                "\nSpeed RPS Filtered: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_Speed_RPS_Filtered, 0, 5) + \
-                                                "\nDigital States: " + str(self.DigitalInputsList_State) + \
-                                                "\nEncodersList_UpdateDeltaTseconds: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_UpdateDeltaTseconds, 0, 5) + \
-                                                "\nEncodersList_CPR: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.EncodersList_CPR, 0, 5) + \
-                                                "\nTime: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.CurrentTime_CalculatedFromMainThread, 0, 3) + \
-                                                "\nMain Thread Frequency: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.DataStreamingFrequency_CalculatedFromMainThread, 0, 3)
+                    self.Data_Label["text"] = self.ConvertDictToProperlyFormattedStringForPrinting(self.MostRecentDataDict,
+                                                                                                    NumberOfDecimalsPlaceToUse = 3,
+                                                                                                    NumberOfEntriesPerLine = 1,
+                                                                                                    NumberOfTabsBetweenItems = 1)
                     #######################################################
 
                     #######################################################
@@ -1716,5 +1869,51 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
     ##########################################################################################################
     ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def ConvertDictToProperlyFormattedStringForPrinting(self, DictToPrint, NumberOfDecimalsPlaceToUse = 3, NumberOfEntriesPerLine = 1, NumberOfTabsBetweenItems = 3):
+
+        try:
+            ProperlyFormattedStringForPrinting = ""
+            ItemsPerLineCounter = 0
+
+            for Key in DictToPrint:
+
+                ##########################################################################################################
+                if isinstance(DictToPrint[Key], dict): #RECURSION
+                    ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + \
+                                                         str(Key) + ":\n" + \
+                                                         self.ConvertDictToProperlyFormattedStringForPrinting(DictToPrint[Key],
+                                                                                                              NumberOfDecimalsPlaceToUse,
+                                                                                                              NumberOfEntriesPerLine,
+                                                                                                              NumberOfTabsBetweenItems)
+
+                else:
+                    ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + \
+                                                         str(Key) + ": " + \
+                                                         self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(DictToPrint[Key],
+                                                                                                                                               0,
+                                                                                                                                               NumberOfDecimalsPlaceToUse)
+                ##########################################################################################################
+
+                ##########################################################################################################
+                if ItemsPerLineCounter < NumberOfEntriesPerLine - 1:
+                    ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + "\t"*NumberOfTabsBetweenItems
+                    ItemsPerLineCounter = ItemsPerLineCounter + 1
+                else:
+                    ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + "\n"
+                    ItemsPerLineCounter = 0
+                ##########################################################################################################
+
+            return ProperlyFormattedStringForPrinting
+
+        except:
+            exceptions = sys.exc_info()[0]
+            print("ConvertDictToProperlyFormattedStringForPrinting, Exceptions: %s" % exceptions)
+            return ""
+            #traceback.print_exc()
     ##########################################################################################################
     ##########################################################################################################

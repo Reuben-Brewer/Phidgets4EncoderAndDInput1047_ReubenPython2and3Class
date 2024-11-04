@@ -9,6 +9,7 @@ From Phidgets' website:
 A quadrature encoder is the most commonly used feedback device for a DC or stepper motor.
 With an encoder, you can keep track of how far your motor has turned, which then allows you to control the
 position and velocity in your code. This Phidget connects to your computer via USB.
+
 Features:
 Four digital inputs for reading limit switches or buttons
 Works with all 0-5V quadrature encoders - simultaneously read four incremental encoders with
@@ -19,7 +20,9 @@ While disabled, this board draws 30mA of current.
 Reports a timestamp in milliseconds for each position change event, for easy velocity calculation."
 
 Phidget Encoder HighSpeed 4-Input
+
 ID: 1047_2B
+
 https://phidgets.com/?tier=3&catid=4&pcid=2&prodid=1199
 
 Reuben Brewer, Ph.D.
@@ -30,12 +33,16 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision I, 05/10/2023
+Software Revision J, 11/03/2024
 
-Verified working on: 
-Python 2.7, 3.8.
-Windows 8.1, 10 64-bit
-Raspberry Pi Buster 
+Verified working on:
+
+Python 2.7, 3.12.
+
+Windows 8.1, 10, and 11 64-bit
+
+Raspberry Pi Buster
+
 (no Mac testing yet)
 
 *NOTE THAT YOU MUST INSTALL BOTH THE Phidget22 LIBRARY AS WELL AS THE PYTHON MODULE.*
@@ -45,13 +52,17 @@ Raspberry Pi Buster
 ########################### Python module installation instructions, all OS's
 
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
+
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['EntryListWithBlinking_ReubenPython2and3Class', 'keyboard', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class']
+
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy', 'pexpect', 'psutil']
+
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['EntryListWithBlinking_ReubenPython2and3Class', 'future.builtins', 'keyboard', 'LowPassFilter_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'Phidget22', 'psutil']
 
 https://pypi.org/project/Phidget22/#files
 
 To install the Python module using pip:
+
 pip install Phidget22       (with "sudo" if on Linux/Raspberry Pi)
 
 To install the Python module from the downloaded .tar.gz file, enter downloaded folder and type "python setup.py install"
@@ -75,6 +86,7 @@ https://www.phidgets.com/docs/OS_-_Linux#Quick_Downloads
 https://www.phidgets.com/education/learn/getting-started-kit-tutorial/install-libraries/
 
 curl -fsSL https://www.phidgets.com/downloads/setup_linux | sudo -E bash -
+
 sudo apt-get install -y libphidget22
  
 ###########################
