@@ -5,25 +5,18 @@ Phidgets4EncoderAndDInput1047_ReubenPython2and3Class
 Wrapper (including ability to hook to Tkinter GUI) to control Phidget Encoder HighSpeed 4-Input (4 quadrature encoders and 4 digital inputs) 1047_2B (non VINT).
 
 From Phidgets' website:
-
 "The PhidgetEncoder Highspeed 4-Input interfaces with any 5V quadrature encoder.
 A quadrature encoder is the most commonly used feedback device for a DC or stepper motor.
 With an encoder, you can keep track of how far your motor has turned, which then allows you to control the
 position and velocity in your code. This Phidget connects to your computer via USB.
 
 Features:
-
-Four digital inputs for reading limit switches or buttons.
-
+Four digital inputs for reading limit switches or buttons
 Works with all 0-5V quadrature encoders - simultaneously read four incremental encoders with
-line driver, open collector, or push-pull output circuits.
-
-Read at speeds of up to 250,000 quadrature cycles per second.
-
+line driver, open collector, or push-pull output circuits
+Read at speeds of up to 250,000 quadrature cycles per second
 Power Saving Options - You can turn it off via software when it's not turning.
-
 While disabled, this board draws 30mA of current.
-
 Reports a timestamp in milliseconds for each position change event, for easy velocity calculation."
 
 Phidget Encoder HighSpeed 4-Input
@@ -40,15 +33,15 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision I, 05/10/2023
+Software Revision J, 11/03/2024
 
-Verified working on: 
+Verified working on:
 
-Python 2.7, 3.8.
+Python 2.7, 3.12.
 
-Windows 8.1, 10 64-bit
+Windows 8.1, 10, and 11 64-bit
 
-Raspberry Pi Buster 
+Raspberry Pi Buster
 
 (no Mac testing yet)
 
@@ -60,11 +53,11 @@ Raspberry Pi Buster
 
 Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['EntryListWithBlinking_ReubenPython2and3Class', 'keyboard', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy', 'pexpect', 'psutil']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['EntryListWithBlinking_ReubenPython2and3Class', 'future.builtins', 'keyboard', 'LowPassFilter_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'Phidget22', 'psutil']
 
 https://pypi.org/project/Phidget22/#files
 
