@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision J, 11/03/2024
+Software Revision K, 11/10/2024
 
 Verified working on: Python 2.7, 3.12 for Windows 8.1, 10, and 11 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -132,13 +132,18 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         self.EncodersList_Speed_RPM_Filtered = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPS_Filtered = [-11111.0] * self.NumberOfEncoders
 
-        self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag = 0
+        self.EncodersList_Speed_UpdateFilterParameters_EventNeedsToBeFiredFlag = 0
 
         self.DigitalInputsList_PhidgetsDIobjects = list()
 
         self.DigitalInputsList_AttachedAndOpenFlag = [0.0] * self.NumberOfDigitalInputs
         self.DigitalInputsList_ErrorCallbackFiredFlag = [0.0] * self.NumberOfDigitalInputs
         self.DigitalInputsList_State = [-1] * self.NumberOfDigitalInputs
+
+        self.EncodersList_SpeedUseMedianFilterFlag_Rx = [-1]*self.NumberOfEncoders
+        self.EncodersList_SpeedMedianFilterKernelSize_Rx = [-1]*self.NumberOfEncoders
+        self.EncodersList_SpeedUseExponentialFilterFlag_Rx = [-1]*self.NumberOfEncoders
+        self.EncodersList_SpeedExponentialFilterLambda_Rx = [-1]*self.NumberOfEncoders
 
         self.MostRecentDataDict = dict()
 
@@ -425,10 +430,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
         #########################################################
         #########################################################
-        if "EncodersList_SpeedExponentialFilterLambda" in setup_dict:
-            self.Process_EncodersList_SpeedExponentialFilterLambda(setup_dict["EncodersList_SpeedExponentialFilterLambda"])
-        else:
-            self.EncodersList_SpeedExponentialFilterLambda = [1.0] * self.NumberOfEncoders  # Default to no filtering, new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
+        self.UpdateSpeedFilterParameters(setup_dict)
         #########################################################
         #########################################################
 
@@ -467,10 +469,11 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         #########################################################
         try:
             for EncoderChannel in range(0, self.NumberOfEncoders):
-                self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject.append(LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
-                                                                                                                ("UseExponentialSmoothingFilterFlag", 1),
-                                                                                                                ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])])))
-                time.sleep(0.1)
+                self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject.append(LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", self.EncodersList_SpeedUseMedianFilterFlag[EncoderChannel]),
+                                                                                                                                     ("MedianFilterKernelSize", self.EncodersList_SpeedMedianFilterKernelSize[EncoderChannel]),
+                                                                                                                                     ("UseExponentialSmoothingFilterFlag", self.EncodersList_SpeedUseExponentialFilterFlag[EncoderChannel]),
+                                                                                                                                     ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])])))
+                #time.sleep(0.1)
                 LOWPASSFILTER_OPEN_FLAG = self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].OBJECT_CREATED_SUCCESSFULLY_FLAG
     
                 if LOWPASSFILTER_OPEN_FLAG != 1:
@@ -656,6 +659,137 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
     #######################################################################################################################
     #######################################################################################################################
+    def UpdateSpeedFilterParameters(self, setup_dict):
+
+        #########################################################
+        #########################################################
+        if "EncodersList_SpeedUseMedianFilterFlag" in setup_dict:
+            self.Process_EncodersList_SpeedUseMedianFilterFlag(setup_dict["EncodersList_SpeedUseMedianFilterFlag"])
+        else:
+            self.EncodersList_SpeedUseMedianFilterFlag = [1] * self.NumberOfEncoders
+        #########################################################
+        #########################################################
+        
+        #########################################################
+        #########################################################
+        if "EncodersList_SpeedMedianFilterKernelSize" in setup_dict:
+            self.Process_EncodersList_SpeedMedianFilterKernelSize(setup_dict["EncodersList_SpeedMedianFilterKernelSize"])
+        else:
+            self.EncodersList_SpeedMedianFilterKernelSize = [5.0] * self.NumberOfEncoders
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        if "EncodersList_SpeedUseExponentialFilterFlag" in setup_dict:
+            self.Process_EncodersList_SpeedUseExponentialFilterFlag(setup_dict["EncodersList_SpeedUseExponentialFilterFlag"])
+        else:
+            self.EncodersList_SpeedUseExponentialFilterFlag = [1] * self.NumberOfEncoders
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        if "EncodersList_SpeedExponentialFilterLambda" in setup_dict:
+            self.Process_EncodersList_SpeedExponentialFilterLambda(setup_dict["EncodersList_SpeedExponentialFilterLambda"])
+        else:
+            self.EncodersList_SpeedExponentialFilterLambda = [0.5] * self.NumberOfEncoders  #new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
+        #########################################################
+        #########################################################
+
+    #######################################################################################################################
+    #######################################################################################################################
+
+    #######################################################################################################################
+    #######################################################################################################################
+    def Process_EncodersList_SpeedUseMedianFilterFlag(self, EncodersList_SpeedUseMedianFilterFlag_TEMP=[]):
+
+        try:
+            
+            #########################################################
+            #########################################################
+            if self.IsInputList(EncodersList_SpeedUseMedianFilterFlag_TEMP) == 1 and len(EncodersList_SpeedUseMedianFilterFlag_TEMP) == self.NumberOfEncoders:
+                self.EncodersList_SpeedUseMedianFilterFlag = list()
+                for EncoderChannel, UseMedianFilterFlag_TEMP in enumerate(EncodersList_SpeedUseMedianFilterFlag_TEMP):
+                    UseMedianFilterFlag = self.PassThrough0and1values_ExitProgramOtherwise("EncodersList_SpeedUseMedianFilterFlag, EncoderChannel " + str(EncoderChannel), UseMedianFilterFlag_TEMP)
+                    self.EncodersList_SpeedUseMedianFilterFlag.append(UseMedianFilterFlag)
+            else:
+                print("Process_EncodersList_SpeedUseMedianFilterFlag: Error, 'EncodersList_SpeedUseMedianFilterFlag' must be a length of length 4 with values of 0 or 1.")
+                return
+
+            print("Process_EncodersList_SpeedUseMedianFilterFlag: EncodersList_SpeedUseMedianFilterFlag: " + str(self.EncodersList_SpeedUseMedianFilterFlag))
+            #########################################################
+            #########################################################
+
+        except:
+            exceptions = sys.exc_info()[0]
+            print("Process_EncodersList_SpeedUseMedianFilterFlag Exceptions: %s" % exceptions)
+            traceback.print_exc()
+
+    #######################################################################################################################
+    #######################################################################################################################
+
+    #######################################################################################################################
+    #######################################################################################################################
+    def Process_EncodersList_SpeedMedianFilterKernelSize(self, EncodersList_SpeedMedianFilterKernelSize_TEMP=[]):
+
+        try:
+            #########################################################
+            #########################################################
+            if self.IsInputList(EncodersList_SpeedMedianFilterKernelSize_TEMP) == 1 and len(EncodersList_SpeedMedianFilterKernelSize_TEMP)== self.NumberOfEncoders:
+                self.EncodersList_SpeedMedianFilterKernelSize = list()
+                for EncoderChannel, SpeedMedianFilterKernelSize_TEMP in enumerate(EncodersList_SpeedMedianFilterKernelSize_TEMP):
+                    SpeedMedianFilterKernelSize = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_SpeedMedianFilterKernelSize, EncoderChannel " + str(EncoderChannel), SpeedMedianFilterKernelSize_TEMP, 3.0, 100.0))
+                    self.EncodersList_SpeedMedianFilterKernelSize.append(SpeedMedianFilterKernelSize)
+
+                self.EncodersList_Speed_UpdateFilterParameters_EventNeedsToBeFiredFlag = 1
+            else:
+                print("Process_EncodersList_SpeedMedianFilterKernelSize: Error, 'EncodersList_SpeedMedianFilterKernelSize' must be a length of length 4 with values in [3, 100].")
+                return
+
+            print("Process_EncodersList_SpeedMedianFilterKernelSize: EncodersList_SpeedMedianFilterKernelSize: " + str(self.EncodersList_SpeedMedianFilterKernelSize))
+            #########################################################
+            #########################################################
+
+        except:
+            exceptions = sys.exc_info()[0]
+            print("Process_EncodersList_SpeedMedianFilterKernelSize Exceptions: %s" % exceptions)
+            traceback.print_exc()
+
+    #######################################################################################################################
+    #######################################################################################################################
+
+    #######################################################################################################################
+    #######################################################################################################################
+    def Process_EncodersList_SpeedUseExponentialFilterFlag(self, EncodersList_SpeedUseExponentialFilterFlag_TEMP=[]):
+
+        try:
+            
+            #########################################################
+            #########################################################
+            if self.IsInputList(EncodersList_SpeedUseExponentialFilterFlag_TEMP) == 1 and len(EncodersList_SpeedUseExponentialFilterFlag_TEMP) == self.NumberOfEncoders:
+                self.EncodersList_SpeedUseExponentialFilterFlag = list()
+                for EncoderChannel, UseExponentialFilterFlag_TEMP in enumerate(EncodersList_SpeedUseExponentialFilterFlag_TEMP):
+                    UseExponentialFilterFlag = self.PassThrough0and1values_ExitProgramOtherwise("EncodersList_SpeedUseExponentialFilterFlag, EncoderChannel " + str(EncoderChannel), UseExponentialFilterFlag_TEMP)
+                    self.EncodersList_SpeedUseExponentialFilterFlag.append(UseExponentialFilterFlag)
+            else:
+                print("Process_EncodersList_SpeedUseExponentialFilterFlag: Error, 'EncodersList_SpeedUseExponentialFilterFlag' must be a length of length 4 with values of 0 or 1.")
+                return
+
+            print("Process_EncodersList_SpeedUseExponentialFilterFlag: EncodersList_SpeedUseExponentialFilterFlag: " + str(self.EncodersList_SpeedUseExponentialFilterFlag))
+            #########################################################
+            #########################################################
+
+        except:
+            exceptions = sys.exc_info()[0]
+            print("Process_EncodersList_SpeedUseExponentialFilterFlag Exceptions: %s" % exceptions)
+            traceback.print_exc()
+
+    #######################################################################################################################
+    #######################################################################################################################
+
+    #######################################################################################################################
+    #######################################################################################################################
     def Process_EncodersList_SpeedExponentialFilterLambda(self, EncodersList_SpeedExponentialFilterLambda_TEMP=[]):
 
         try:
@@ -667,12 +801,12 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
                     SpeedExponentialFilterLambda = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_SpeedExponentialFilterLambda, EncoderChannel " + str(EncoderChannel), SpeedExponentialFilterLambda_TEMP, 0.0, 1.0)
                     self.EncodersList_SpeedExponentialFilterLambda.append(SpeedExponentialFilterLambda)
 
-                self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag = 1
+                self.EncodersList_Speed_UpdateFilterParameters_EventNeedsToBeFiredFlag = 1
             else:
-                print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: Error, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
+                print("Process_EncodersList_SpeedExponentialFilterLambda: Error, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values in [0.0, 1.0].")
                 return
 
-            print("Phidgets4EncoderAndDInput1047_ReubenPython2and3Class __init__: EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
+            print("Process_EncodersList_SpeedExponentialFilterLambda: EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
             #########################################################
             #########################################################
 
@@ -737,7 +871,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
             ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a numerical value, Exceptions: %s" % exceptions)
+            print(self.TellWhichFileWereIn() + ", PassThrough0and1values_ExitProgramOtherwise Error. InputNumber '" + InputNameString + "' must be a numerical value, Exceptions: %s" % exceptions)
 
             ##########################
             if ExitProgramIfFailureFlag == 1:
@@ -761,7 +895,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
             else:
 
-                print("PassThrough0and1values_ExitProgramOtherwise Error. '" +
+                print(self.TellWhichFileWereIn() + ", PassThrough0and1values_ExitProgramOtherwise Error. '" +
                               str(InputNameString) +
                               "' must be 0 or 1 (value was " +
                               str(InputNumber_ConvertedToFloat) +
@@ -781,7 +915,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
 
             ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThrough0and1values_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
+            print(self.TellWhichFileWereIn() + ", PassThrough0and1values_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
 
             ##########################
             if ExitProgramIfFailureFlag == 1:
@@ -814,7 +948,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         except:
             ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
+            print(self.TellWhichFileWereIn() + ", PassThroughFloatValuesInRange_ExitProgramOtherwise Error. InputNumber '" + InputNameString + "' must be a float value, Exceptions: %s" % exceptions)
             traceback.print_exc()
 
             ##########################
@@ -837,7 +971,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
             InputNumber_ConvertedToFloat_Limited = self.LimitNumber_FloatOutputOnly(RangeMinValue, RangeMaxValue, InputNumber_ConvertedToFloat)
 
             if InputNumber_ConvertedToFloat_Limited != InputNumber_ConvertedToFloat:
-                print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
+                print(self.TellWhichFileWereIn() + ", PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
                       str(InputNameString) +
                       "' must be in the range [" +
                       str(RangeMinValue) +
@@ -860,7 +994,7 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
         except:
             ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
+            print(self.TellWhichFileWereIn() + ", PassThroughFloatValuesInRange_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
             traceback.print_exc()
 
             ##########################
@@ -1422,14 +1556,15 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
             ##########################################################################################################
 
             ##########################################################################################################
-            if self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag == 1:
+            if self.EncodersList_Speed_UpdateFilterParameters_EventNeedsToBeFiredFlag == 1:
 
                 for EncoderChannel in range(0, self.NumberOfEncoders):
-                    self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].UpdateFilterParameters(dict([("UseMedianFilterFlag", 0),
-                                                                                                                    ("UseExponentialSmoothingFilterFlag", 1),
-                                                                                                                    ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])]))
+                    self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].UpdateFilterParameters(dict([("UseMedianFilterFlag", self.EncodersList_SpeedUseMedianFilterFlag[EncoderChannel]),
+                                                                                                                                    ("MedianFilterKernelSize", self.EncodersList_SpeedMedianFilterKernelSize[EncoderChannel]),
+                                                                                                                                    ("UseExponentialSmoothingFilterFlag", self.EncodersList_SpeedUseExponentialFilterFlag[EncoderChannel]),
+                                                                                                                                    ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])]))
 
-            self.EncodersList_Speed_LowPassFilter_UpdateFilterParameters_EventNeedsToBeFiredFlag = 0
+            self.EncodersList_Speed_UpdateFilterParameters_EventNeedsToBeFiredFlag = 0
             ##########################################################################################################
 
             ##########################################################################################################
@@ -1440,6 +1575,32 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
                     if SuccessFlag == 1:
                         self.EncodersList_NeedsToBeHomedFlag[EncoderChannel] = 0
             ##########################################################################################################
+
+            '''
+            ########################################################################################################## For debugging only
+            try:
+                for EncoderChannel in range(0, self.NumberOfEncoders):
+                    DictTemp = self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].GetMostRecentDataDict()
+                    #print("DictTemp: " + str(DictTemp))
+
+                    if "UseMedianFilterFlag" in DictTemp:
+                        self.EncodersList_SpeedUseMedianFilterFlag_Rx[EncoderChannel] = DictTemp["UseMedianFilterFlag"]
+
+                    if "MedianFilterKernelSize" in DictTemp:
+                        self.EncodersList_SpeedMedianFilterKernelSize_Rx[EncoderChannel] = DictTemp["MedianFilterKernelSize"]
+
+                    if "UseExponentialSmoothingFilterFlag" in DictTemp:
+                        self.EncodersList_SpeedUseExponentialFilterFlag_Rx[EncoderChannel] = DictTemp["UseExponentialSmoothingFilterFlag"]
+
+                    if "ExponentialSmoothingFilterLambda" in DictTemp:
+                        self.EncodersList_SpeedExponentialFilterLambda_Rx[EncoderChannel] = DictTemp["ExponentialSmoothingFilterLambda"]
+
+            except:
+                exceptions = sys.exc_info()[0]
+                print("Exceptions: %s" % exceptions)
+                traceback.print_exc()
+            ##########################################################################################################
+            '''
 
             ##########################################################################################################
             self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
@@ -1457,7 +1618,14 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
                                                  ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
                                                  ("DigitalInputsList_State", self.DigitalInputsList_State),
                                                  ("DigitalInputsList_ErrorCallbackFiredFlag", self.DigitalInputsList_ErrorCallbackFiredFlag),
+                                                 ("EncodersList_SpeedUseMedianFilterFlag", self.EncodersList_SpeedUseMedianFilterFlag),
+                                                 ("EncodersList_SpeedMedianFilterKernelSize", self.EncodersList_SpeedMedianFilterKernelSize),
+                                                 ("EncodersList_SpeedUseExponentialFilterFlag", self.EncodersList_SpeedUseExponentialFilterFlag),
                                                  ("EncodersList_SpeedExponentialFilterLambda", self.EncodersList_SpeedExponentialFilterLambda),
+                                                 ("EncodersList_SpeedUseMedianFilterFlag_Rx", self.EncodersList_SpeedUseMedianFilterFlag_Rx),
+                                                 ("EncodersList_SpeedMedianFilterKernelSize_Rx", self.EncodersList_SpeedMedianFilterKernelSize_Rx),
+                                                 ("EncodersList_SpeedUseExponentialFilterFlag_Rx", self.EncodersList_SpeedUseExponentialFilterFlag_Rx),
+                                                 ("EncodersList_SpeedExponentialFilterLambda_Rx", self.EncodersList_SpeedExponentialFilterLambda_Rx),
                                                  ("Time", self.CurrentTime_CalculatedFromMainThread)])
             ##########################################################################################################
 
@@ -1663,8 +1831,18 @@ class Phidgets4EncoderAndDInput1047_ReubenPython2and3Class(Frame): #Subclass the
     ##########################################################################################################
     def EncodersList_HomingButtonObjectsResponse(self, EncoderChannelNumber):
 
-        self.EncodersList_NeedsToBeHomedFlag[EncoderChannelNumber] = 1
+        self.HomeEncoder(EncoderChannelNumber)
         #self.MyPrint_WithoutLogFile("EncodersList_HomingButtonObjectsResponse: Event fired for EncoderChannelNumber " + str(EncoderChannelNumber))
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def HomeEncoder(self, EncoderChannelNumber):
+
+        self.EncodersList_NeedsToBeHomedFlag[EncoderChannelNumber] = 1
+        print("HomeEncoder: Event fired for EncoderChannelNumber " + str(EncoderChannelNumber))
 
     ##########################################################################################################
     ##########################################################################################################

@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision J, 11/03/2024
+Software Revision K, 11/10/2024
 
 Verified working on: Python 2.7, 3.12 for Windows 8.1, 10, and 11 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -14,6 +14,7 @@ Verified working on: Python 2.7, 3.12 for Windows 8.1, 10, and 11 64-bit and Ras
 __author__ = 'reuben.brewer'
 
 ###########################################################
+from CSVdataLogger_ReubenPython3Class import *
 from EntryListWithBlinking_ReubenPython2and3Class import *
 from MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class import *
 from MyPrint_ReubenPython2and3Class import *
@@ -275,6 +276,10 @@ def GUI_update_clock():
     global EntryListWithBlinking_ReubenPython2and3ClassObject
     global EntryListWithBlinking_OPEN_FLAG
 
+    global CSVdataLogger_ReubenPython3ClassObject
+    global CSVdataLogger_OPEN_FLAG
+    global SHOW_IN_GUI_CSVdataLogger_FLAG
+
     global MyPrint_ReubenPython2and3ClassObject
     global MyPrint_OPEN_FLAG
     global SHOW_IN_GUI_MyPrint_FLAG
@@ -299,6 +304,11 @@ def GUI_update_clock():
             #########################################################
             if EntryListWithBlinking_OPEN_FLAG == 1:
                 EntryListWithBlinking_ReubenPython2and3ClassObject.GUI_update_clock()
+            #########################################################
+
+            #########################################################
+            if CSVdataLogger_OPEN_FLAG == 1 and SHOW_IN_GUI_CSVdataLogger_FLAG == 1:
+                CSVdataLogger_ReubenPython3ClassObject.GUI_update_clock()
             #########################################################
 
             #########################################################
@@ -448,8 +458,11 @@ if __name__ == '__main__':
     global USE_EntryListWithBlinking_FLAG
     USE_EntryListWithBlinking_FLAG = 1
 
+    global USE_CSVdataLogger_FLAG
+    USE_CSVdataLogger_FLAG = 1
+
     global USE_MyPrint_FLAG
-    USE_MyPrint_FLAG = 1
+    USE_MyPrint_FLAG = 0
 
     global USE_MyPlotterPureTkinterStandAloneProcess_FLAG
     USE_MyPlotterPureTkinterStandAloneProcess_FLAG = 1
@@ -463,6 +476,9 @@ if __name__ == '__main__':
     #################################################
     global SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG
     SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG = 1
+
+    global SHOW_IN_GUI_CSVdataLogger_FLAG
+    SHOW_IN_GUI_CSVdataLogger_FLAG = 1
 
     global SHOW_IN_GUI_MyPrint_FLAG
     SHOW_IN_GUI_MyPrint_FLAG = 1
@@ -499,13 +515,27 @@ if __name__ == '__main__':
     GUI_ROWSPAN_EntryListWithBlinking = 1
     GUI_COLUMNSPAN_EntryListWithBlinking = 1
 
+    global GUI_ROW_CSVdataLogger
+    global GUI_COLUMN_CSVdataLogger
+    global GUI_PADX_CSVdataLogger
+    global GUI_PADY_CSVdataLogger
+    global GUI_ROWSPAN_CSVdataLogger
+    global GUI_COLUMNSPAN_CSVdataLogger
+    GUI_ROW_CSVdataLogger = 2
+
+    GUI_COLUMN_CSVdataLogger = 0
+    GUI_PADX_CSVdataLogger = 1
+    GUI_PADY_CSVdataLogger = 1
+    GUI_ROWSPAN_CSVdataLogger = 1
+    GUI_COLUMNSPAN_CSVdataLogger = 1
+
     global GUI_ROW_MyPrint
     global GUI_COLUMN_MyPrint
     global GUI_PADX_MyPrint
     global GUI_PADY_MyPrint
     global GUI_ROWSPAN_MyPrint
     global GUI_COLUMNSPAN_MyPrint
-    GUI_ROW_MyPrint = 2
+    GUI_ROW_MyPrint = 3
 
     GUI_COLUMN_MyPrint = 0
     GUI_PADX_MyPrint = 1
@@ -608,6 +638,42 @@ if __name__ == '__main__':
     global Phidgets4EncoderAndDInput1047_MostRecentDict_Time
     Phidgets4EncoderAndDInput1047_MostRecentDict_Time = -11111.0
 
+    global EncodersList_SpeedUseMedianFilterFlag_0
+    EncodersList_SpeedUseMedianFilterFlag_0 = 1
+
+    global EncodersList_SpeedUseMedianFilterFlag_1
+    EncodersList_SpeedUseMedianFilterFlag_1 = 1
+
+    global EncodersList_SpeedUseMedianFilterFlag_2
+    EncodersList_SpeedUseMedianFilterFlag_2 = 1
+
+    global EncodersList_SpeedUseMedianFilterFlag_3
+    EncodersList_SpeedUseMedianFilterFlag_3 = 1
+
+    global EncodersList_SpeedMedianFilterKernelSize_0
+    EncodersList_SpeedMedianFilterKernelSize_0 = 5
+
+    global EncodersList_SpeedMedianFilterKernelSize_1
+    EncodersList_SpeedMedianFilterKernelSize_1 = 5
+    
+    global EncodersList_SpeedMedianFilterKernelSize_2
+    EncodersList_SpeedMedianFilterKernelSize_2 = 5
+    
+    global EncodersList_SpeedMedianFilterKernelSize_3
+    EncodersList_SpeedMedianFilterKernelSize_3 = 5
+
+    global EncodersList_SpeedUseExponentialFilterFlag_0
+    EncodersList_SpeedUseExponentialFilterFlag_0 = 1
+
+    global EncodersList_SpeedUseExponentialFilterFlag_1
+    EncodersList_SpeedUseExponentialFilterFlag_1 = 1
+
+    global EncodersList_SpeedUseExponentialFilterFlag_2
+    EncodersList_SpeedUseExponentialFilterFlag_2 = 1
+
+    global EncodersList_SpeedUseExponentialFilterFlag_3
+    EncodersList_SpeedUseExponentialFilterFlag_3 = 1
+
     global EncodersList_SpeedExponentialFilterLambda_0
     EncodersList_SpeedExponentialFilterLambda_0 = 0.98
     
@@ -620,8 +686,8 @@ if __name__ == '__main__':
     global EncodersList_SpeedExponentialFilterLambda_3
     EncodersList_SpeedExponentialFilterLambda_3 = 0.98
 
-    global Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedExponentialFilterLambdaFlag
-    Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedExponentialFilterLambdaFlag = 0
+    global Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedFilterLambdaFlag
+    Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedFilterLambdaFlag = 0
     #################################################
     #################################################
 
@@ -642,8 +708,23 @@ if __name__ == '__main__':
     EntryListWithBlinking_MostRecentDict_DataUpdateNumber_last = -1
 
     EntryWidth = 10
-    LabelWidth = 40
+    LabelWidth = 75
     FontSize = 8
+    #################################################
+    #################################################
+
+    #################################################
+    #################################################
+    global CSVdataLogger_ReubenPython3ClassObject
+
+    global CSVdataLogger_OPEN_FLAG
+    CSVdataLogger_OPEN_FLAG = -1
+
+    global CSVdataLogger_MostRecentDict
+    CSVdataLogger_MostRecentDict = dict()
+
+    global CSVdataLogger_MostRecentDict_Time
+    CSVdataLogger_MostRecentDict_Time = -11111.0
     #################################################
     #################################################
 
@@ -695,7 +776,7 @@ if __name__ == '__main__':
     global Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict
     Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_Phidgets4EncoderAndDInput1047_FLAG),
                                     ("root", Tab_Phidgets4EncoderAndDInput1047),
-                                    ("EnableInternal_MyPrint_Flag", 1),
+                                    ("EnableInternal_MyPrint_Flag", 0),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
                                     ("GUI_ROW", GUI_ROW_Phidgets4EncoderAndDInput1047),
@@ -715,6 +796,9 @@ if __name__ == '__main__':
                                                                                 ("MainThread_TimeToSleepEachLoop", 0.001),
                                                                                 ("EncodersList_ChannelsBeingWatchedList", [1, 1, 1, 1]),
                                                                                 ("EncodersList_CPR", [1000, 128, 500, 8096]),
+                                                                                ("EncodersList_SpeedUseMedianFilterFlag", [EncodersList_SpeedUseMedianFilterFlag_0, EncodersList_SpeedUseMedianFilterFlag_1, EncodersList_SpeedUseMedianFilterFlag_2, EncodersList_SpeedUseMedianFilterFlag_3]),
+                                                                                ("EncodersList_SpeedMedianFilterKernelSize", [EncodersList_SpeedMedianFilterKernelSize_0, EncodersList_SpeedMedianFilterKernelSize_1, EncodersList_SpeedMedianFilterKernelSize_2, EncodersList_SpeedMedianFilterKernelSize_3]),
+                                                                                ("EncodersList_SpeedUseExponentialFilterFlag", [EncodersList_SpeedUseExponentialFilterFlag_0, EncodersList_SpeedUseExponentialFilterFlag_1, EncodersList_SpeedUseExponentialFilterFlag_2, EncodersList_SpeedUseExponentialFilterFlag_3]),
                                                                                 ("EncodersList_SpeedExponentialFilterLambda", [EncodersList_SpeedExponentialFilterLambda_0, EncodersList_SpeedExponentialFilterLambda_1, EncodersList_SpeedExponentialFilterLambda_2, EncodersList_SpeedExponentialFilterLambda_3]),
                                                                                 ("DigitalInputsList_ChannelsBeingWatchedList", [1, 1, 1, 1])])
 
@@ -743,7 +827,22 @@ if __name__ == '__main__':
                                     ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_EntryListWithBlinking)])
 
     global EntryListWithBlinking_Variables_ListOfDicts
-    EntryListWithBlinking_Variables_ListOfDicts = [dict([("Name", "EncodersList_SpeedExponentialFilterLambda_0"),("Type", "float"),("StartingVal", EncodersList_SpeedExponentialFilterLambda_0),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+    EntryListWithBlinking_Variables_ListOfDicts = [dict([("Name", "EncodersList_SpeedUseMedianFilterFlag_0"),("Type", "int"),("StartingVal", EncodersList_SpeedUseMedianFilterFlag_0),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedUseMedianFilterFlag_1"),("Type", "int"),("StartingVal", EncodersList_SpeedUseMedianFilterFlag_1),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedUseMedianFilterFlag_2"),("Type", "int"),("StartingVal", EncodersList_SpeedUseMedianFilterFlag_2),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedUseMedianFilterFlag_3"),("Type", "int"),("StartingVal", EncodersList_SpeedUseMedianFilterFlag_3),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+
+                                                   dict([("Name", "EncodersList_SpeedMedianFilterKernelSize_0"),("Type", "int"),("StartingVal", EncodersList_SpeedMedianFilterKernelSize_0),("MinVal", 3.0),("MaxVal", 100.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedMedianFilterKernelSize_1"),("Type", "int"),("StartingVal", EncodersList_SpeedMedianFilterKernelSize_1),("MinVal", 3.0),("MaxVal", 100.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedMedianFilterKernelSize_2"),("Type", "int"),("StartingVal", EncodersList_SpeedMedianFilterKernelSize_2),("MinVal", 3.0),("MaxVal", 100.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedMedianFilterKernelSize_3"),("Type", "int"),("StartingVal", EncodersList_SpeedMedianFilterKernelSize_3),("MinVal", 3.0),("MaxVal", 100.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+
+                                                   dict([("Name", "EncodersList_SpeedUseExponentialFilterFlag_0"),("Type", "int"),("StartingVal", EncodersList_SpeedUseExponentialFilterFlag_0),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedUseExponentialFilterFlag_1"),("Type", "int"),("StartingVal", EncodersList_SpeedUseExponentialFilterFlag_1),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedUseExponentialFilterFlag_2"),("Type", "int"),("StartingVal", EncodersList_SpeedUseExponentialFilterFlag_2),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   dict([("Name", "EncodersList_SpeedUseExponentialFilterFlag_3"),("Type", "int"),("StartingVal", EncodersList_SpeedUseExponentialFilterFlag_3),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
+                                                   
+                                                   dict([("Name", "EncodersList_SpeedExponentialFilterLambda_0"),("Type", "float"),("StartingVal", EncodersList_SpeedExponentialFilterLambda_0),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
                                                    dict([("Name", "EncodersList_SpeedExponentialFilterLambda_1"),("Type", "float"),("StartingVal", EncodersList_SpeedExponentialFilterLambda_1),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
                                                    dict([("Name", "EncodersList_SpeedExponentialFilterLambda_2"),("Type", "float"),("StartingVal", EncodersList_SpeedExponentialFilterLambda_2),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)]),
                                                    dict([("Name", "EncodersList_SpeedExponentialFilterLambda_3"),("Type", "float"),("StartingVal", EncodersList_SpeedExponentialFilterLambda_3),("MinVal", 0.0),("MaxVal", 1.0),("EntryBlinkEnabled", 0),("EntryWidth", EntryWidth),("LabelWidth", LabelWidth),("FontSize", FontSize)])]
@@ -762,6 +861,65 @@ if __name__ == '__main__':
             exceptions = sys.exc_info()[0]
             print("EntryListWithBlinking_ReubenPython2and3ClassObject __init__: Exceptions: %s" % exceptions)
             traceback.print_exc()
+    #################################################
+    #################################################
+
+    #################################################
+    #################################################
+    #################################################
+    global CSVdataLogger_ReubenPython3ClassObject_GUIparametersDict
+    CSVdataLogger_ReubenPython3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_CSVdataLogger_FLAG),
+                                    ("root", Tab_Phidgets4EncoderAndDInput1047),
+                                    ("EnableInternal_MyPrint_Flag", 1),
+                                    ("NumberOfPrintLines", 10),
+                                    ("UseBorderAroundThisGuiObjectFlag", 0),
+                                    ("GUI_ROW", GUI_ROW_CSVdataLogger),
+                                    ("GUI_COLUMN", GUI_COLUMN_CSVdataLogger),
+                                    ("GUI_PADX", GUI_PADX_CSVdataLogger),
+                                    ("GUI_PADY", GUI_PADY_CSVdataLogger),
+                                    ("GUI_ROWSPAN", GUI_ROWSPAN_CSVdataLogger),
+                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_CSVdataLogger)])
+
+    #################################################
+    #################################################
+
+    #################################################
+    CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList = ["Time",
+                                                                                    "Pos_Rev_0",
+                                                                                    "Pos_Rev_1",
+                                                                                    "Pos_Rev_2",
+                                                                                    "Pos_Rev_3",
+                                                                                    "Speed_RPS_0",
+                                                                                    "Speed_RPS_1",
+                                                                                    "Speed_RPS_2",
+                                                                                    "Speed_RPS_3"]
+    #################################################
+
+    #################################################
+    print("CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList: " + str(CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList))
+    #################################################
+
+    #################################################
+    #################################################
+    global CSVdataLogger_ReubenPython3ClassObject_setup_dict
+    CSVdataLogger_ReubenPython3ClassObject_setup_dict = dict([("GUIparametersDict", CSVdataLogger_ReubenPython3ClassObject_GUIparametersDict),
+                                                                                ("NameToDisplay_UserSet", "CSVdataLogger"),
+                                                                                ("CSVfile_DirectoryPath", "C:\\CSVfiles"),
+                                                                                ("FileNamePrefix", "CSV_file_"),
+                                                                                ("VariableNamesForHeaderList", CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList),
+                                                                                ("MainThread_TimeToSleepEachLoop", 0.002),
+                                                                                ("SaveOnStartupFlag", 0)])
+
+    if USE_CSVdataLogger_FLAG == 1:
+        try:
+            CSVdataLogger_ReubenPython3ClassObject = CSVdataLogger_ReubenPython3Class(CSVdataLogger_ReubenPython3ClassObject_setup_dict)
+            CSVdataLogger_OPEN_FLAG = CSVdataLogger_ReubenPython3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+
+        except:
+            exceptions = sys.exc_info()[0]
+            print("CSVdataLogger_ReubenPython3ClassObject __init__: Exceptions: %s" % exceptions)
+            traceback.print_exc()
+    #################################################
     #################################################
     #################################################
 
@@ -854,7 +1012,6 @@ if __name__ == '__main__':
     #################################################
     if USE_KEYBOARD_FLAG == 1:
         keyboard.on_press_key("esc", ExitProgram_Callback)
-        keyboard.on_press_key("q", ExitProgram_Callback)
     #################################################
     #################################################
 
@@ -870,6 +1027,14 @@ if __name__ == '__main__':
     #################################################
     if USE_EntryListWithBlinking_FLAG == 1 and EntryListWithBlinking_OPEN_FLAG != 1:
         print("Failed to open EntryListWithBlinking_ReubenPython2and3Class.")
+        #ExitProgram_Callback()
+    #################################################
+    #################################################
+
+    #################################################
+    #################################################
+    if USE_CSVdataLogger_FLAG == 1 and CSVdataLogger_OPEN_FLAG != 1:
+        print("Failed to open CSVdataLogger_ReubenPython3Class.")
         #ExitProgram_Callback()
     #################################################
     #################################################
@@ -917,12 +1082,27 @@ if __name__ == '__main__':
                 #print("DataUpdateNumber = " + str(EntryListWithBlinking_MostRecentDict_DataUpdateNumber) + ", EntryListWithBlinking_MostRecentDict: " + str(EntryListWithBlinking_MostRecentDict))
 
                 if EntryListWithBlinking_MostRecentDict_DataUpdateNumber > 1:
+                    EncodersList_SpeedUseMedianFilterFlag_0 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseMedianFilterFlag_0"]
+                    EncodersList_SpeedUseMedianFilterFlag_1 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseMedianFilterFlag_1"]
+                    EncodersList_SpeedUseMedianFilterFlag_2 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseMedianFilterFlag_2"]
+                    EncodersList_SpeedUseMedianFilterFlag_3 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseMedianFilterFlag_3"]
+
+                    EncodersList_SpeedMedianFilterKernelSize_0 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedMedianFilterKernelSize_0"]
+                    EncodersList_SpeedMedianFilterKernelSize_1 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedMedianFilterKernelSize_1"]
+                    EncodersList_SpeedMedianFilterKernelSize_2 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedMedianFilterKernelSize_2"]
+                    EncodersList_SpeedMedianFilterKernelSize_3 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedMedianFilterKernelSize_3"]
+
+                    EncodersList_SpeedUseExponentialFilterFlag_0 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseExponentialFilterFlag_0"]
+                    EncodersList_SpeedUseExponentialFilterFlag_1 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseExponentialFilterFlag_1"]
+                    EncodersList_SpeedUseExponentialFilterFlag_2 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseExponentialFilterFlag_2"]
+                    EncodersList_SpeedUseExponentialFilterFlag_3 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedUseExponentialFilterFlag_3"]
+
                     EncodersList_SpeedExponentialFilterLambda_0 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedExponentialFilterLambda_0"]
                     EncodersList_SpeedExponentialFilterLambda_1 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedExponentialFilterLambda_1"]
                     EncodersList_SpeedExponentialFilterLambda_2 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedExponentialFilterLambda_2"]
                     EncodersList_SpeedExponentialFilterLambda_3 = EntryListWithBlinking_MostRecentDict["EncodersList_SpeedExponentialFilterLambda_3"]
 
-                    Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedExponentialFilterLambdaFlag = 1
+                    Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedFilterLambdaFlag = 1
 
         ###################################################
 
@@ -968,15 +1148,46 @@ if __name__ == '__main__':
         #################################################
         if Phidgets4EncoderAndDInput1047_OPEN_FLAG == 1:
 
-            if Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedExponentialFilterLambdaFlag == 1:
-                Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.Process_EncodersList_SpeedExponentialFilterLambda([EncodersList_SpeedExponentialFilterLambda_0,
-                                                                                                                              EncodersList_SpeedExponentialFilterLambda_1,
-                                                                                                                              EncodersList_SpeedExponentialFilterLambda_2,
-                                                                                                                              EncodersList_SpeedExponentialFilterLambda_3])
+            if Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedFilterLambdaFlag == 1:
+                SpeedFilterDict = dict([("EncodersList_SpeedUseMedianFilterFlag", [EncodersList_SpeedUseMedianFilterFlag_0, EncodersList_SpeedUseMedianFilterFlag_1, EncodersList_SpeedUseMedianFilterFlag_2, EncodersList_SpeedUseMedianFilterFlag_3]),
+                                        ("EncodersList_SpeedMedianFilterKernelSize", [EncodersList_SpeedMedianFilterKernelSize_0, EncodersList_SpeedMedianFilterKernelSize_1, EncodersList_SpeedMedianFilterKernelSize_2, EncodersList_SpeedMedianFilterKernelSize_3]),
+                                        ("EncodersList_SpeedUseExponentialFilterFlag", [EncodersList_SpeedUseExponentialFilterFlag_0, EncodersList_SpeedUseExponentialFilterFlag_1, EncodersList_SpeedUseExponentialFilterFlag_2, EncodersList_SpeedUseExponentialFilterFlag_3]),
+                                        ("EncodersList_SpeedExponentialFilterLambda", [EncodersList_SpeedExponentialFilterLambda_0, EncodersList_SpeedExponentialFilterLambda_1, EncodersList_SpeedExponentialFilterLambda_2, EncodersList_SpeedExponentialFilterLambda_3])])
 
-                Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedExponentialFilterLambdaFlag = 0
+                Phidgets4EncoderAndDInput1047_ReubenPython2and3ClassObject.UpdateSpeedFilterParameters(SpeedFilterDict)
+
+                Phidgets4EncoderAndDInput1047_NeedToUpdateSpeedFilterLambdaFlag = 0
         #################################################
         #################################################
+
+        #################################################### SET's
+        ####################################################
+        ####################################################
+        if Phidgets4EncoderAndDInput1047_OPEN_FLAG == 1 and CSVdataLogger_OPEN_FLAG == 1:
+
+            ####################################################
+            ####################################################
+            ListToWrite = []
+            ListToWrite.append(CurrentTime_MainLoopThread)
+
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev[0])
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev[1])
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev[2])
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev[3])
+
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered[0])
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered[1])
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered[2])
+            ListToWrite.append(Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered[3])
+
+            #print("ListToWrite: " + str(ListToWrite))
+            ####################################################
+            ####################################################
+
+            CSVdataLogger_ReubenPython3ClassObject.AddDataToCSVfile_ExternalFunctionCall(ListToWrite)
+        ####################################################
+        ####################################################
+        ####################################################
 
         #################################################### SET's
         ####################################################
@@ -990,10 +1201,22 @@ if __name__ == '__main__':
 
                     if MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_MostRecentDict_StandAlonePlottingProcess_ReadyForWritingFlag == 1:
                         if CurrentTime_MainLoopThread - LastTime_MainLoopThread_MyPlotterPureTkinterStandAloneProcess >= 0.030:
+
+                            '''
+                            MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject.ExternalAddPointOrListOfPointsToPlot(["Channel0", "Channel1", "Channel2", "Channel3"],
+                                                                                                                                    [CurrentTime_MainLoopThread]*4,
+                                                                                                                                    [Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Raw[0],
+                                                                                                                                     Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Filtered[0],
+                                                                                                                                     Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Raw[1],
+                                                                                                                                     Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Filtered[1],])
+                            '''
+
+                            #'''
                             MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject.ExternalAddPointOrListOfPointsToPlot(["Channel0", "Channel1"],
                                                                                                                                     [CurrentTime_MainLoopThread]*2,
-                                                                                                                                    [Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Raw[0], Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPM_Filtered[0]])
-
+                                                                                                                                    [Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Position_Rev[0],
+                                                                                                                                     Phidgets4EncoderAndDInput1047_MostRecentDict_EncodersList_Speed_RPS_Filtered[0]])
+                            #'''
 
                             LastTime_MainLoopThread_MyPlotterPureTkinterStandAloneProcess = CurrentTime_MainLoopThread
                 ####################################################
@@ -1022,6 +1245,11 @@ if __name__ == '__main__':
     #################################################
     if EntryListWithBlinking_OPEN_FLAG == 1:
         EntryListWithBlinking_ReubenPython2and3ClassObject.ExitProgram_Callback()
+    #################################################
+
+    #################################################
+    if CSVdataLogger_OPEN_FLAG == 1:
+        CSVdataLogger_ReubenPython3ClassObject.ExitProgram_Callback()
     #################################################
 
     #################################################
