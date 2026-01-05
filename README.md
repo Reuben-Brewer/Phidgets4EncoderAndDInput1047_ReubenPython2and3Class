@@ -33,15 +33,15 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision K, 11/10/2024
+Software Revision L, 12/28/2025
 
 Verified working on:
 
-Python 2.7, 3.12.
+Python 3.11/12/13.
 
-Windows 8.1, 10, and 11 64-bit
+Windows 10/11 64-bit
 
-Raspberry Pi Buster
+Raspberry Pi Bookworm
 
 (no Mac testing yet)
 
@@ -51,13 +51,13 @@ Raspberry Pi Buster
 
 ########################### Python module installation instructions, all OS's
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies: ['LowPassFilter_ReubenPython2and3Class', 'Phidget22', 'ReubenGithubCodeModulePaths']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'keyboard', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'keyboard', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'numpy', 'pexpect', 'psutil']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['EntryListWithBlinking_ReubenPython2and3Class', 'GetCPUandMemoryUsageOfProcessByPID_ReubenPython3Class', 'numpy', 'pexpect', 'psutil', 'pyautogui', 'ReubenGithubCodeModulePaths']
 
-Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'future.builtins', 'keyboard', 'LowPassFilter_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'Phidget22', 'psutil']
+Phidgets4EncoderAndDInput1047_ReubenPython2and3Class, ListOfModuleDependencies_All:['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'GetCPUandMemoryUsageOfProcessByPID_ReubenPython3Class', 'keyboard', 'LowPassFilter_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'Phidget22', 'psutil', 'pyautogui', 'ReubenGithubCodeModulePaths']
 
 https://pypi.org/project/Phidget22/#files
 
